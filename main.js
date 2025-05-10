@@ -2,11 +2,18 @@ document.getElementById("messageForm").addEventListener("submit", function (e) {
   e.preventDefault();
 
   const name = document.getElementById("name").value.trim();
-  const avatarKey = document.getElementById("avatar").value;
+  let avatarKey = document.getElementById("avatar").value;
   const message = document.getElementById("message").value.trim();
-
-  const avatarUrl = getAvatarUrl(avatarKey, name);  // 加 name 傳入
   const timestamp = new Date().toLocaleString();
+
+  // 專屬角色判斷邏輯：僅當暱稱為「小屁股蛋」且選擇「Special」時才觸發
+  if (name === "小屁股蛋" && avatarKey === "Special") {
+    avatarKey = "Special";
+  } else if (avatarKey === "Special") {
+    avatarKey = "Luffy"; // 避免亂選 Special
+  }
+
+  const avatarUrl = getAvatarUrl(avatarKey);
 
   const messageHTML = `
     <div class="message cycle" data-step="0" data-name="${name}" data-message="${message}" data-time="${timestamp}" data-avatar="${avatarKey}">
@@ -33,18 +40,14 @@ document.addEventListener("click", function (e) {
   } else if (step === 1) {
     msg.innerHTML = `<div class="text-box">${getRandomHBD()}<br><span class="timestamp">${time}</span></div>`;
   } else {
-    const avatarUrl = getAvatarUrl(avatarKey, name);
-    msg.innerHTML = `<img class="character" src="${avatarUrl}" alt="角色" />`;
+    msg.innerHTML = `<img class="character" src="${getAvatarUrl(avatarKey)}" alt="角色" />`;
     step = -1;
   }
 
   msg.setAttribute("data-step", step + 1);
 });
 
-function getAvatarUrl(key, name = "") {
-  if (key === "Special" && name !== "小屁股蛋") {
-    return 'images/Luffy.png'; // 避免濫用專屬角色
-  }
+function getAvatarUrl(key) {
   const map = {
     Luffy: 'images/Luffy.png',
     Nami: 'images/Nami.png',
