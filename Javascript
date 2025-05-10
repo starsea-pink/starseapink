@@ -1,0 +1,70 @@
+console.log("Script loaded!");
+document.getElementById("messageForm").addEventListener("submit", function (e) {
+  e.preventDefault();
+
+  const name = document.getElementById("name").value.trim();
+  const avatarKey = document.getElementById("character").value;
+  const message = document.getElementById("message").value.trim();
+
+  const avatarUrl = getAvatarUrl(name, avatarKey);
+
+  const messageHTML = `
+    <div class="message" onclick="revealMessage(this)">
+      <img class="avatar" src="${avatarUrl}" alt="${name}的頭像" />
+      <div>
+        <div class="message-name">${name}</div>
+        <div class="message-text">${message}</div>
+        <div class="hbd-popup">${getRandomHBD()}</div>
+      </div>
+    </div>
+  `;
+
+  document.getElementById("app").insertAdjacentHTML("beforeend", messageHTML);
+  document.getElementById("messageForm").reset();
+});
+
+function revealMessage(element) {
+  if (element.classList.contains("hbd-show")) return;
+
+  if (!element.classList.contains("revealed")) {
+    element.classList.add("revealed");
+  } else {
+    element.classList.add("hbd-show");
+  }
+}
+
+function getAvatarUrl(name, avatarKey) {
+  if (name === "小屁股蛋") {
+    return "https://i.imgur.com/QXbaF3x.png";
+  }
+
+  const avatars = {
+    Luffy: 'images/Luffy.png',
+    Nami: 'images/Nami.png',
+    Robin: 'images/Robin.png',
+    Hancock: 'images/Hancock.png',
+    Zoro: 'images/Zoro.png',
+    Sanji: 'images/Sanji.png',
+    beauty1: 'images/beauty1.png',
+    beauty2: 'images/beauty2.png',
+    Special: 'images/Special.png'
+  };
+
+  return avatars[avatarKey] || "https://i.imgur.com/default-avatar.png";
+}
+
+function getRandomHBD() {
+  const messages = [
+    "生日快樂！",
+    "Happy Birthday!",
+    "祝你越來越美～",
+    "HBD！爽爽過一天！",
+    "願你天天都像今天一樣快樂！",
+    "壽星最大啦～",
+    "Happy B-day to you～",
+    "祝你吃飽睡好爽爽der～",
+    "Happy happy birthday！",
+    "今仔日你最大～"
+  ];
+  return messages[Math.floor(Math.random() * messages.length)];
+}
