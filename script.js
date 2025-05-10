@@ -1,4 +1,4 @@
-document.getElementById("messageForm").addEventListener("submit", function (e) {
+vdocument.getElementById("messageForm").addEventListener("submit", function (e) {
   e.preventDefault();
 
   const name = document.getElementById("name").value.trim();
@@ -64,7 +64,7 @@ function getRandomHBD() {
   const messages = [
     "生日快樂！",
     "Happy Birthday!",
-    "祝你越來越美～",
+    "祝你越來越帥～",
     "HBD！爽爽過一天！",
     "願你天天都像今天一樣快樂！",
     "壽星最大啦～",
@@ -72,6 +72,7 @@ function getRandomHBD() {
     "祝你吃飽睡好爽爽der～",
     "Happy happy birthday！",
     "今仔日你最大～"
+    "我最崇拜Eric了"
   ];
   return messages[Math.floor(Math.random() * messages.length)];
 }
