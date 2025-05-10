@@ -57,15 +57,14 @@ function getRandomHBD() {
   const messages = [
     "生日快樂！",
     "Happy Birthday!",
-    "祝你越來越帥～",
+    "祝你越來越美～",
     "HBD！爽爽過一天！",
     "願你天天都像今天一樣快樂！",
     "壽星最大啦～",
     "Happy B-day to you～",
     "祝你吃飽睡好爽爽der～",
     "Happy happy birthday！",
-    "今仔日你最大～",
-    "我最崇拜Eric了",
+    "今仔日你最大～"
   ];
   return messages[Math.floor(Math.random() * messages.length)];
 }
