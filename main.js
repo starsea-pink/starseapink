@@ -16,7 +16,7 @@ document.getElementById("messageForm").addEventListener("submit", function (e) {
 
   document.getElementById("app").insertAdjacentHTML("beforeend", messageHTML);
   document.getElementById("messageForm").reset();
-  updateMessageCount(); // 每次送出後更新總數
+  updateMessageCount(); // 更新留言數
 });
 
 document.addEventListener("click", function (e) {
@@ -75,6 +75,9 @@ function getRandomHBD() {
 
 function updateMessageCount() {
   const count = document.querySelectorAll(".message").length;
-  document.getElementById("messageCount").textContent = `目前已有 ${count} 則生日留言！`;
+  document.getElementById("messageCount").textContent = `目前共有 ${count} 則留言`;
 }
-}
+
+document.addEventListener("DOMContentLoaded", function () {
+  updateMessageCount();
+});
