@@ -1,67 +1,66 @@
-vdocument.getElementById("messageForm").addEventListener("submit", function (e) {
+document.getElementById("messageForm").addEventListener("submit", function (e) {
   e.preventDefault();
 
   const name = document.getElementById("name").value.trim();
-  const characterKey = document.getElementById("character").value;
+  const avatarKey = document.getElementById("avatar").value;
   const message = document.getElementById("message").value.trim();
 
-  const imgUrl = getCharacterImage(name, characterKey);
-  const hbdText = getRandomHBD();
+  const avatarUrl = getAvatarUrl(avatarKey, name);  // 加 name 傳入
+  const timestamp = new Date().toLocaleString();
 
-  const messageElement = document.createElement("div");
-  messageElement.className = "message";
+  const messageHTML = `
+    <div class="message cycle" data-step="0" data-name="${name}" data-message="${message}" data-time="${timestamp}" data-avatar="${avatarKey}">
+      <img class="character" src="${avatarUrl}" alt="角色" />
+    </div>
+  `;
 
-  let state = 0; // 0: 角色, 1: 留言, 2: HBD, 3: 角色
-
-  const characterImg = document.createElement("img");
-  characterImg.className = "character";
-  characterImg.src = imgUrl;
-
-  const messageText = document.createElement("div");
-  messageText.className = "message-content";
-  messageText.innerText = message;
-
-  const hbdMessage = document.createElement("div");
-  hbdMessage.className = "message-content";
-  hbdMessage.innerText = hbdText;
-
-  messageElement.appendChild(characterImg);
-  messageElement.appendChild(messageText);
-  messageElement.appendChild(hbdMessage);
-
-  messageElement.addEventListener("click", () => {
-    state = (state + 1) % 3;
-    messageText.style.display = state === 1 ? "block" : "none";
-    hbdMessage.style.display = state === 2 ? "block" : "none";
-    characterImg.style.display = state === 0 ? "block" : "none";
-  });
-
-  document.getElementById("app").appendChild(messageElement);
+  document.getElementById("app").insertAdjacentHTML("beforeend", messageHTML);
   document.getElementById("messageForm").reset();
 });
 
-function getCharacterImage(name, key) {
-  if (name === "小屁股蛋") {
-    return "https://i.imgur.com/QXbaF3x.png";
+document.addEventListener("click", function (e) {
+  const msg = e.target.closest(".message.cycle");
+  if (!msg) return;
+
+  let step = parseInt(msg.getAttribute("data-step"), 10);
+  const name = msg.getAttribute("data-name");
+  const message = msg.getAttribute("data-message");
+  const time = msg.getAttribute("data-time");
+  const avatarKey = msg.getAttribute("data-avatar") || "Luffy";
+
+  if (step === 0) {
+    msg.innerHTML = `<div class="text-box">${name}：${message}<br><span class="timestamp">${time}</span></div>`;
+  } else if (step === 1) {
+    msg.innerHTML = `<div class="text-box">${getRandomHBD()}<br><span class="timestamp">${time}</span></div>`;
+  } else {
+    const avatarUrl = getAvatarUrl(avatarKey, name);
+    msg.innerHTML = `<img class="character" src="${avatarUrl}" alt="角色" />`;
+    step = -1;
   }
 
-  const map = {
-    Luffy: 'images/full/Luffy.png',
-    Nami: 'images/full/Nami.png',
-    Robin: 'images/full/Robin.png',
-    Hancock: 'images/full/Hancock.png',
-    Sanji: 'images/full/Sanji.png',
-    Zoro: 'images/full/Zoro.png',
-    beauty1: 'images/full/beauty1.png',
-    beauty2: 'images/full/beauty2.png',
-    Special: 'images/full/Special.png'
-  };
+  msg.setAttribute("data-step", step + 1);
+});
 
-  return map[key] || "https://i.imgur.com/default-avatar.png";
+function getAvatarUrl(key, name = "") {
+  if (key === "Special" && name !== "小屁股蛋") {
+    return 'images/Luffy.png'; // 避免濫用專屬角色
+  }
+  const map = {
+    Luffy: 'images/Luffy.png',
+    Nami: 'images/Nami.png',
+    Robin: 'images/Robin.png',
+    Hancock: 'images/Hancock.png',
+    Sanji: 'images/Sanji.png',
+    Zoro: 'images/Zoro.png',
+    beauty1: 'images/beauty1.png',
+    beauty2: 'images/beauty2.png',
+    Special: 'images/special.png'
+  };
+  return map[key] || map.Luffy;
 }
 
 function getRandomHBD() {
-  const messages = [
+  const list = [
     "生日快樂！",
     "Happy Birthday!",
     "祝你越來越帥～",
@@ -74,5 +73,5 @@ function getRandomHBD() {
     "今仔日你最大～",
     "我最崇拜Eric了"
   ];
-  return messages[Math.floor(Math.random() * messages.length)];
+  return list[Math.floor(Math.random() * list.length)];
 }
