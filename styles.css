@@ -1,0 +1,60 @@
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  background-image: url("images/backage.png");
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  min-height: 100vh;
+}
+form {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin: 20px;
+  gap: 10px;
+  background: rgba(255, 255, 255, 0.85);
+  padding: 15px;
+  border-radius: 10px;
+  width: 300px;
+}
+
+input, select, textarea, button {
+  width: 100%;
+  padding: 8px;
+  font-size: 1em;
+}
+
+#app {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+  padding: 20px;
+  justify-content: center;
+}
+
+.message {
+  position: relative;
+  width: 180px;
+  min-height: 250px;
+  background: rgba(255, 255, 255, 0.75);
+  border-radius: 10px;
+  padding: 10px;
+  text-align: center;
+  transition: all 0.3s ease;
+}
+
+.character {
+  width: 100%;
+  height: auto;
+  max-height: 250px;
+  object-fit: contain;
+}
+
+.text-box {
+  font-size: 16px;
+  font-weight: bold;
+  color: #222;
+  padding: 10px;
+}
+}
