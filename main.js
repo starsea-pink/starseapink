@@ -2,18 +2,11 @@ document.getElementById("messageForm").addEventListener("submit", function (e) {
   e.preventDefault();
 
   const name = document.getElementById("name").value.trim();
-  let avatarKey = document.getElementById("avatar").value;
+  const avatarKey = document.getElementById("avatar").value;
   const message = document.getElementById("message").value.trim();
-  const timestamp = new Date().toLocaleString();
-
-  // 專屬角色判斷邏輯：僅當暱稱為「小屁股蛋」且選擇「Special」時才觸發
-  if (name === "小屁股蛋" && avatarKey === "Special") {
-    avatarKey = "Special";
-  } else if (avatarKey === "Special") {
-    avatarKey = "Luffy"; // 避免亂選 Special
-  }
 
   const avatarUrl = getAvatarUrl(avatarKey);
+  const timestamp = new Date().toLocaleString();
 
   const messageHTML = `
     <div class="message cycle" data-step="0" data-name="${name}" data-message="${message}" data-time="${timestamp}" data-avatar="${avatarKey}">
@@ -23,6 +16,7 @@ document.getElementById("messageForm").addEventListener("submit", function (e) {
 
   document.getElementById("app").insertAdjacentHTML("beforeend", messageHTML);
   document.getElementById("messageForm").reset();
+  updateMessageCount(); // 每次送出後更新總數
 });
 
 document.addEventListener("click", function (e) {
@@ -77,4 +71,10 @@ function getRandomHBD() {
     "我最崇拜Eric了"
   ];
   return list[Math.floor(Math.random() * list.length)];
+}
+
+function updateMessageCount() {
+  const count = document.querySelectorAll(".message").length;
+  document.getElementById("messageCount").textContent = `目前已有 ${count} 則生日留言！`;
+}
 }
