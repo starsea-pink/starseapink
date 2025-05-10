@@ -71,8 +71,8 @@ function getRandomHBD() {
     "Happy B-day to you～",
     "祝你吃飽睡好爽爽der～",
     "Happy happy birthday！",
-    "今仔日你最大～",
-    "我最崇拜Eric了",
+    "今仔日你最大～"
+    "我最崇拜Eric了"
   ];
   return messages[Math.floor(Math.random() * messages.length)];
 }
