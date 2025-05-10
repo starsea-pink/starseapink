@@ -5,7 +5,7 @@ document.getElementById("messageForm").addEventListener("submit", function (e) {
   const avatarKey = document.getElementById("avatar").value;
   const message = document.getElementById("message").value.trim();
 
-  const avatarUrl = getAvatarUrl(avatarKey);
+  const avatarUrl = getAvatarUrl(avatarKey, name);  // 加 name 傳入
   const timestamp = new Date().toLocaleString();
 
   const messageHTML = `
@@ -33,14 +33,18 @@ document.addEventListener("click", function (e) {
   } else if (step === 1) {
     msg.innerHTML = `<div class="text-box">${getRandomHBD()}<br><span class="timestamp">${time}</span></div>`;
   } else {
-    msg.innerHTML = `<img class="character" src="${getAvatarUrl(avatarKey)}" alt="角色" />`;
+    const avatarUrl = getAvatarUrl(avatarKey, name);
+    msg.innerHTML = `<img class="character" src="${avatarUrl}" alt="角色" />`;
     step = -1;
   }
 
   msg.setAttribute("data-step", step + 1);
 });
 
-function getAvatarUrl(key) {
+function getAvatarUrl(key, name = "") {
+  if (key === "Special" && name !== "小屁股蛋") {
+    return 'images/Luffy.png'; // 避免濫用專屬角色
+  }
   const map = {
     Luffy: 'images/Luffy.png',
     Nami: 'images/Nami.png',
@@ -66,7 +70,7 @@ function getRandomHBD() {
     "Happy B-day to you～",
     "祝你吃飽睡好爽爽der～",
     "Happy happy birthday！",
-    "今仔日你最大～"
+    "今仔日你最大～",
     "我最崇拜Eric了"
   ];
   return list[Math.floor(Math.random() * list.length)];
