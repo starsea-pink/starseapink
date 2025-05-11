@@ -1,34 +1,40 @@
 <!DOCTYPE html>
-<html lang="zh-Hant">
+<html lang="zh-TW">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>蒟蒻信的悶騷慶生留言板</title>
-  <link rel="stylesheet" href="styles.css" />
+  <title>悶騷慶生留言板</title>
+  <link rel="stylesheet" href="style.css" />
 </head>
 <body>
   <div class="container">
-    <h1>蒟蒻信的悶騷慶生留言板</h1>
+    <h1>悶騷慶生留言板</h1>
+
+    <!-- 留言數 -->
+    <div id="messageCount">目前共有 0 則留言</div>
+
+    <!-- 留言顯示區 -->
+    <div id="app"></div>
+
+    <!-- 留言表單 -->
     <form id="messageForm">
-      <input type="text" id="name" placeholder="你的名字" required />
-      <select id="avatar" required>
-        <option value="" disabled selected>選擇角色</option>
+      <input type="text" id="name" placeholder="你的暱稱" required />
+      <select id="avatar">
         <option value="Luffy">魯夫</option>
         <option value="Nami">娜美</option>
         <option value="Robin">羅賓</option>
-        <option value="Hancock">女帝</option>
+        <option value="Hancock">漢考克</option>
         <option value="Sanji">香吉士</option>
         <option value="Zoro">索隆</option>
-        <option value="beauty1">美女1</option>
-        <option value="beauty2">美女2</option>
-        <option value="Special">（秘密角色）</option>
+        <option value="beauty1">性感美女1號</option>
+        <option value="beauty2">性感美女2號</option>
+        <option value="Special">專屬角色</option>
       </select>
-      <textarea id="message" placeholder="寫下你對壽星說的話吧！" required></textarea>
-      <button type="submit">送出</button>
+      <textarea id="message" placeholder="請留下生日祝福..." required></textarea>
+      <button type="submit">送出留言</button>
     </form>
-    <div id ="messageCount"class="message-count>目前共有0則留言</div>"
-    <div id="app"></div>
   </div>
-  <script src="main.js"defer></script>
+
+  <script src="main.js"></script>
 </body>
 </html>
