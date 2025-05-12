@@ -1,50 +1,46 @@
-document.addEventListener("DOMContentLoaded", function () {
-  const app = document.getElementById("app");
-  const form = document.getElementById("messageForm");
-  const nameInput = document.getElementById("name");
-  const avatarSelect = document.getElementById("avatar");
-  const messageInput = document.getElementById("message");
-  const messageCount = document.getElementById("messageCount");
+const form = document.getElementById('messageForm');
+const app = document.getElementById('app');
+const messageCount = document.getElementById('messageCount');
 
-  let messages = [];
+let messages = [];
 
-  function renderMessages() {
-    app.innerHTML = "";
-    messages.forEach((msg, index) => {
-      const card = document.createElement("div");
-      card.className = "message-card";
+form.addEventListener('submit', function(e) {
+  e.preventDefault();
 
-      card.innerHTML = `
-        <div class="avatar ${msg.avatar}"></div>
-        <div class="content">
-          <h4>${msg.name}</h4>
-          <p>${msg.message}</p>
-        </div>
-      `;
+  const name = document.getElementById('name').value.trim();
+  const avatar = document.getElementById('avatar').value;
+  const message = document.getElementById('message').value.trim();
 
-      app.appendChild(card);
-    });
+  if (!name || !message) return;
 
-    messageCount.textContent = `目前共有 ${messages.length} 則留言`;
-  }
+  // 判斷是否觸發專屬角色
+  const finalAvatar = name === '小屁股蛋' ? 'Special' : avatar;
 
-  form.addEventListener("submit", function (e) {
-    e.preventDefault();
+  const newMessage = {
+    name,
+    avatar: finalAvatar,
+    message,
+    time: new Date().toLocaleString()
+  };
 
-    const name = nameInput.value.trim();
-    let avatar = avatarSelect.value;
-    const message = messageInput.value.trim();
-
-    if (!name || !message) return;
-
-    // 如果暱稱是「小屁股蛋」，套用特殊頭像
-    if (name === "小屁股蛋") {
-      avatar = "special";
-    }
-
-    messages.push({ name, avatar, message });
-    renderMessages();
-
-    form.reset();
-  });
+  messages.unshift(newMessage); // 新留言加在最前面
+  renderMessages();
+  form.reset();
 });
+
+function renderMessages() {
+  app.innerHTML = '';
+  messages.forEach(msg => {
+    const div = document.createElement('div');
+    div.className = 'message';
+    div.innerHTML = `
+      <div class="avatar ${msg.avatar}"></div>
+      <div><strong>${msg.name}</strong> 說：</div>
+      <div>${msg.message}</div>
+      <div style="font-size: 12px; color: #777;">${msg.time}</div>
+    `;
+    app.appendChild(div);
+  });
+
+  messageCount.innerText = `目前共有 ${messages.length} 則留言`;
+}

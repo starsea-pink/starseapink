@@ -2,7 +2,7 @@
 
 body {
   font-family: 'ZCOOL KuaiLe', cursive, sans-serif;
-  background: url('https://i.imgur.com/w1UrP3Z.jpg') no-repeat center center fixed;
+  background: url('images/backage.png') no-repeat center center fixed;
   background-size: cover;
   color: #333;
   margin: 0;
@@ -45,9 +45,23 @@ h1 {
 }
 
 .message .avatar {
-  font-weight: bold;
-  color: #2980b9;
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  background-size: cover;
+  background-position: center;
+  margin-bottom: 8px;
 }
+
+.avatar.Luffy { background-image: url('images/Luffy.png'); }
+.avatar.Nami { background-image: url('images/Nami.png'); }
+.avatar.Robin { background-image: url('images/Robin.png'); }
+.avatar.Hancock { background-image: url('images/Hancock.png'); }
+.avatar.Sanji { background-image: url('images/Sanji.png'); }
+.avatar.Zoro { background-image: url('images/Zoro.png'); }
+.avatar.beauty1 { background-image: url('images/beauty1.png'); }
+.avatar.beauty2 { background-image: url('images/beauty2.png'); }
+.avatar.Special { background-image: url('images/special.png'); }
 
 form {
   display: flex;
