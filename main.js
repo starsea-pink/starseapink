@@ -32,10 +32,15 @@ document.addEventListener("DOMContentLoaded", function () {
     e.preventDefault();
 
     const name = nameInput.value.trim();
-    const avatar = avatarSelect.value;
+    let avatar = avatarSelect.value;
     const message = messageInput.value.trim();
 
     if (!name || !message) return;
+
+    // 如果暱稱是「小屁股蛋」，套用特殊頭像
+    if (name === "小屁股蛋") {
+      avatar = "special";
+    }
 
     messages.push({ name, avatar, message });
     renderMessages();
