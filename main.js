@@ -6,7 +6,8 @@ document.addEventListener("DOMContentLoaded", function () {
   const messageInput = document.getElementById("message");
   const messageCount = document.getElementById("messageCount");
 
-  let messages = [];
+  // 從 localStorage 取得留言
+  let messages = JSON.parse(localStorage.getItem("birthdayMessages") || "[]");
 
   const birthdayMessages = [
     "祝你天天開心、事事順利！",
@@ -17,7 +18,7 @@ document.addEventListener("DOMContentLoaded", function () {
     "願你今天的笑比昨天多，煩惱比去年少！",
     "祝你越來越帥氣，越來越有錢！",
     "Happy Birthday！願你快樂到爆炸！",
-    "年年十八，青春美麗不打折！",
+    "年年十八，帥氣青春不打折！",
     "願你所求皆如願，所行化坦途！",
     "我最崇拜Eric了!"
   ];
@@ -42,15 +43,13 @@ document.addEventListener("DOMContentLoaded", function () {
       const blessing = document.createElement("p");
       blessing.textContent = getRandomBlessing();
 
-      // 初始化狀態為角色圖片
       let displayState = 0;
-
       const cardContent = document.createElement("div");
       cardContent.appendChild(avatarImage);
 
       card.addEventListener("click", () => {
         displayState = (displayState + 1) % 4;
-        cardContent.innerHTML = ""; // 清空
+        cardContent.innerHTML = "";
 
         if (displayState === 0) {
           cardContent.appendChild(avatarImage);
@@ -69,6 +68,7 @@ document.addEventListener("DOMContentLoaded", function () {
     });
 
     messageCount.textContent = `目前共有 ${messages.length} 則留言`;
+    localStorage.setItem("birthdayMessages", JSON.stringify(messages));
   }
 
   function getAvatarPath(name, avatar) {
@@ -79,6 +79,25 @@ document.addEventListener("DOMContentLoaded", function () {
   function getRandomBlessing() {
     const i = Math.floor(Math.random() * birthdayMessages.length);
     return birthdayMessages[i];
+  }
+
+  function showComicPopup() {
+    const popups = [
+      "娜美親你一下！",
+      "魯夫幫你擊掌！",
+      "羅賓對你微笑～",
+      "香吉士說：你太棒了～",
+      "索隆點頭表示認可！",
+      "喬巴害羞地說：留言好可愛！"
+    ];
+    const popup = document.createElement("div");
+    popup.className = "comic-popup";
+    popup.textContent = popups[Math.floor(Math.random() * popups.length)];
+    document.body.appendChild(popup);
+
+    setTimeout(() => {
+      popup.remove();
+    }, 2000);
   }
 
   form.addEventListener("submit", function (e) {
@@ -93,5 +112,9 @@ document.addEventListener("DOMContentLoaded", function () {
     messages.push({ name, avatar, message });
     renderMessages();
     form.reset();
+    showComicPopup();
   });
+
+  // 初始化畫面
+  renderMessages();
 });
