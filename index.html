@@ -3,37 +3,41 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>悶騷慶生留言板</title>
+  <title>蒟蒻信悶騷慶生留言板</title>
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
-  <div class="container">
-    <h1>蒟蒻信悶騷慶生留言板</h1>
+  <h1>蒟蒻信悶騷慶生留言板</h1>
 
-    <!-- 留言數 -->
-    <div id="messageCount">目前共有 0 則留言</div>
+  <form id="messageForm">
+    <input type="text" id="name" placeholder="你的名字" required />
+    <select id="avatar">
+      <option value="luffy">魯夫</option>
+      <option value="zoro">索隆</option>
+      <option value="nami">娜美</option>
+      <option value="robin">羅賓</option>
+      <option value="sanji">香吉士</option>
+      <option value="franky">佛朗基</option>
+      <option value="chopper">喬巴</option>
+    </select>
+    <textarea id="message" placeholder="寫下想說的話..." required></textarea>
+    <button type="submit">送出</button>
+  </form>
 
-    <!-- 留言顯示區 -->
-    <div id="app"></div>
-
-    <!-- 留言表單 -->
-    <form id="messageForm">
-      <input type="text" id="name" placeholder="你的暱稱" required />
-      <select id="avatar">
-        <option value="Luffy">魯夫</option>
-        <option value="Nami">娜美</option>
-        <option value="Robin">羅賓</option>
-        <option value="Hancock">漢考克</option>
-        <option value="Sanji">香吉士</option>
-        <option value="Zoro">索隆</option>
-        <option value="beauty1">性感美女1號</option>
-        <option value="beauty2">性感美女2號</option>
-        <option value="Special">專屬角色</option>
-      </select>
-      <textarea id="message" placeholder="請留下生日祝福..." required></textarea>
-      <button type="submit">送出留言</button>
-    </form>
+  <div class="buttons">
+    <button id="clearMessages">夏夕夏景（清除留言）</button>
+    <button id="exportMessages">匯出留言 JSON</button>
   </div>
+
+  <p id="messageCount">目前共有 0 則留言</p>
+  <div id="app"></div>
+
+  <div id="popup" class="popup hidden">
+    <img id="popupImg" src="" alt="角色圖" />
+    <p id="popupText"></p>
+  </div>
+
+  <audio id="bgMusic" src="music/world_end.mp3" autoplay loop></audio>
 
   <script src="main.js"></script>
 </body>
