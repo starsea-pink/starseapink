@@ -1,131 +1,98 @@
-document.addEventListener("DOMContentLoaded", function () {
-  const app = document.getElementById("app");
-  const form = document.getElementById("messageForm");
-  const nameInput = document.getElementById("name");
-  const avatarSelect = document.getElementById("avatar");
-  const messageInput = document.getElementById("message");
-  const messageCount = document.getElementById("messageCount");
-  const exportBtn = document.getElementById("exportMessages");
+const form = document.querySelector('form');
+const app = document.querySelector('#app');
+const nameInput = document.querySelector('#name');
+const blessingInput = document.querySelector('#blessing');
+const charaSelect = document.querySelector('#chara');
+const music = new Audio('https://file-examples.com/storage/fe93066b705061e4eae3a58/2017/11/file_example_MP3_700KB.mp3'); // Demo背景音樂
+music.loop = true;
+music.volume = 0.3;
+music.play();
 
-  let messages = JSON.parse(localStorage.getItem("birthdayMessages")) || [];
+// 漫畫互動台詞 pool
+const blessingLines = [
+  '娜美親你一下！',
+  '羅賓給你一個微笑祝福～',
+  '魯夫說：我會成為海賊王，也祝你生日快樂！',
+  '香吉士送你一盤愛心料理！',
+  '索隆冷冷地說：祝你過得還行…',
+  '喬巴：謝、謝謝你！生日快樂啦！',
+  '騙人布：我早就準備了一個宇宙級大驚喜！',
+  '布魯克：Yohoho～可以看你的內褲嗎？（喂）'
+];
 
-  const birthdayMessages = [
-    "祝你天天開心、事事順利！",
-    "願你今年比去年更幸福！",
-    "生日快樂，年年有今日，歲歲有今朝！",
-    "願你的生活像動畫一樣精彩！",
-    "生日快樂！願你心想事成、笑口常開！",
-    "願你今天的笑比昨天多，煩惱比去年少！",
-    "祝你越來越帥氣，越來越有錢！",
-    "Happy Birthday！願你快樂到爆炸！",
-    "年年十八，青春美麗不打折！",
-    "願你所求皆如願，所行化坦途！",
-    "我最崇拜Eric了!"
-  ];
+// 留言暫存
+let messages = JSON.parse(localStorage.getItem('messages')) || [];
 
-  function renderMessages() {
-    app.innerHTML = "";
-    messages.forEach((msg, index) => {
-      const card = document.createElement("div");
-      card.className = "message-card";
+// 顯示留言
+function renderMessages() {
+  app.innerHTML = '';
+  messages.forEach(({ name, chara, blessing }) => {
+    const div = document.createElement('div');
+    div.className = 'message-card';
+    div.innerHTML = `
+      <div class="avatar">${name}（選擇：${chara}）</div>
+      <div class="blessing">${blessing}</div>
+    `;
+    app.appendChild(div);
+  });
+}
 
-      const avatarImage = document.createElement("img");
-      avatarImage.src = getAvatarPath(msg.name, msg.avatar);
-      avatarImage.className = "avatar-img";
-      avatarImage.alt = "角色圖片";
+// 彈出祝福互動視窗
+function showPopup() {
+  const popup = document.createElement('div');
+  popup.className = 'popup';
+  const img = document.createElement('img');
+  img.src = './nami.png'; // 你原本的娜美圖放這
+  const text = document.createElement('p');
+  text.textContent = blessingLines[Math.floor(Math.random() * blessingLines.length)];
+  popup.appendChild(img);
+  popup.appendChild(text);
+  document.body.appendChild(popup);
 
-      const nameTag = document.createElement("h4");
-      nameTag.textContent = msg.name;
+  setTimeout(() => {
+    popup.style.opacity = 0;
+    setTimeout(() => popup.remove(), 1000);
+  }, 5000);
+}
 
-      const messageText = document.createElement("p");
-      messageText.textContent = msg.message;
+// 表單送出
+form.addEventListener('submit', (e) => {
+  e.preventDefault();
+  const newMessage = {
+    name: nameInput.value.trim(),
+    chara: charaSelect.value,
+    blessing: blessingInput.value.trim()
+  };
 
-      const blessing = document.createElement("p");
-      blessing.textContent = getRandomBlessing();
-
-      let displayState = 0;
-
-      const cardContent = document.createElement("div");
-      cardContent.appendChild(avatarImage);
-
-      card.addEventListener("click", () => {
-        displayState = (displayState + 1) % 4;
-        cardContent.innerHTML = "";
-
-        if (displayState === 0) {
-          cardContent.appendChild(avatarImage);
-        } else if (displayState === 1) {
-          cardContent.appendChild(nameTag);
-          cardContent.appendChild(messageText);
-        } else if (displayState === 2) {
-          cardContent.appendChild(blessing);
-        } else {
-          cardContent.appendChild(avatarImage);
-        }
-      });
-
-      card.appendChild(cardContent);
-      app.appendChild(card);
-    });
-
-    messageCount.textContent = `目前共有 ${messages.length} 則留言`;
-  }
-
-  function getAvatarPath(name, avatar) {
-    if (name === "小屁股蛋") return "/images/special.png";
-    return `/images/${avatar}.png`;
-  }
-
-  function getRandomBlessing() {
-    const i = Math.floor(Math.random() * birthdayMessages.length);
-    return birthdayMessages[i];
-  }
-
-  function saveMessages() {
-    localStorage.setItem("birthdayMessages", JSON.stringify(messages));
-  }
-
-  function showInteractionPopup() {
-    const popup = document.createElement("div");
-    popup.className = "popup-message";
-    popup.textContent = "娜美親你一下～生日快樂！";
-
-    document.body.appendChild(popup);
-
-    setTimeout(() => {
-      popup.remove();
-    }, 2500);
-  }
-
-  form.addEventListener("submit", function (e) {
-    e.preventDefault();
-
-    const name = nameInput.value.trim();
-    const avatar = avatarSelect.value;
-    const message = messageInput.value.trim();
-
-    if (!name || !message) return;
-
-    messages.push({ name, avatar, message });
-    saveMessages();
+  if (newMessage.name && newMessage.blessing) {
+    messages.push(newMessage);
+    localStorage.setItem('messages', JSON.stringify(messages));
     renderMessages();
-    showInteractionPopup();
+    showPopup();
     form.reset();
-  });
-
-  exportBtn.addEventListener("click", function () {
-    const dataStr = JSON.stringify(messages, null, 2);
-    const blob = new Blob([dataStr], { type: "application/json" });
-    const url = URL.createObjectURL(blob);
-
-    const a = document.createElement("a");
-    a.href = url;
-    a.download = "birthday_messages.json";
-    a.click();
-
-    URL.revokeObjectURL(url);
-  });
-
-  // 初始化畫面
-  renderMessages();
+  }
 });
+
+// 清除留言
+document.querySelector('#clear').addEventListener('click', () => {
+  if (confirm('確定要清空所有留言？這將無法復原喔！')) {
+    messages = [];
+    localStorage.removeItem('messages');
+    renderMessages();
+  }
+});
+
+// 匯出留言
+document.querySelector('#export').addEventListener('click', () => {
+  const content = messages.map(m => `${m.name}（${m.chara}）：${m.blessing}`).join('\n');
+  const blob = new Blob([content], { type: 'text/plain;charset=utf-8' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = '留言板.txt';
+  a.click();
+  URL.revokeObjectURL(url);
+});
+
+// 頁面載入時顯示留言
+renderMessages();
