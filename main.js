@@ -5,6 +5,7 @@ document.addEventListener("DOMContentLoaded", function () {
   const avatarSelect = document.getElementById("avatar");
   const messageInput = document.getElementById("message");
   const messageCount = document.getElementById("messageCount");
+  const exportBtn = document.getElementById("exportMessages");
 
   let messages = JSON.parse(localStorage.getItem("birthdayMessages")) || [];
 
@@ -24,7 +25,6 @@ document.addEventListener("DOMContentLoaded", function () {
 
   function renderMessages() {
     app.innerHTML = "";
-
     messages.forEach((msg, index) => {
       const card = document.createElement("div");
       card.className = "message-card";
@@ -81,35 +81,20 @@ document.addEventListener("DOMContentLoaded", function () {
     return birthdayMessages[i];
   }
 
-  function showInteraction(name) {
-    const interaction = document.createElement("div");
-    interaction.className = "interaction-popup";
-    interaction.textContent = `娜美親了 ${name} 一下！`;
-    document.body.appendChild(interaction);
-
-    setTimeout(() => {
-      interaction.remove();
-    }, 3000);
+  function saveMessages() {
+    localStorage.setItem("birthdayMessages", JSON.stringify(messages));
   }
 
-  function addClearButton() {
-    if (document.getElementById("clearBtn")) return;
+  function showInteractionPopup() {
+    const popup = document.createElement("div");
+    popup.className = "popup-message";
+    popup.textContent = "娜美親你一下～生日快樂！";
 
-    const clearBtn = document.createElement("button");
-    clearBtn.id = "clearBtn";
-    clearBtn.textContent = "清除所有留言（僅限夏夕夏景）";
-    clearBtn.className = "clear-btn";
+    document.body.appendChild(popup);
 
-    clearBtn.addEventListener("click", () => {
-      const confirmed = confirm("確定要清除所有留言嗎？此動作無法復原！");
-      if (confirmed) {
-        messages = [];
-        localStorage.removeItem("birthdayMessages");
-        renderMessages();
-      }
-    });
-
-    document.body.appendChild(clearBtn);
+    setTimeout(() => {
+      popup.remove();
+    }, 2500);
   }
 
   form.addEventListener("submit", function (e) {
@@ -122,12 +107,25 @@ document.addEventListener("DOMContentLoaded", function () {
     if (!name || !message) return;
 
     messages.push({ name, avatar, message });
-    localStorage.setItem("birthdayMessages", JSON.stringify(messages));
+    saveMessages();
     renderMessages();
-    showInteraction(name);
-    if (name === "夏夕夏景") addClearButton();
+    showInteractionPopup();
     form.reset();
   });
 
+  exportBtn.addEventListener("click", function () {
+    const dataStr = JSON.stringify(messages, null, 2);
+    const blob = new Blob([dataStr], { type: "application/json" });
+    const url = URL.createObjectURL(blob);
+
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = "birthday_messages.json";
+    a.click();
+
+    URL.revokeObjectURL(url);
+  });
+
+  // 初始化畫面
   renderMessages();
 });

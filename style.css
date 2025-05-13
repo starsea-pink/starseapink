@@ -1,132 +1,143 @@
-@import url('https://fonts.googleapis.com/css2?family=ZCOOL+KuaiLe&display=swap');
-
 body {
-  font-family: 'ZCOOL KuaiLe', cursive, sans-serif;
-  background: url('images/backage.png') no-repeat center center fixed;
-  background-size: cover;
-  color: #333;
+  font-family: 'Microsoft JhengHei', sans-serif;
+  background: #fff8e7;
   margin: 0;
-  padding: 0;
-}
-
-.container {
-  max-width: 600px;
-  margin: 40px auto;
   padding: 20px;
-  background-color: rgba(255, 255, 255, 0.9);
-  border-radius: 16px;
-  box-shadow: 0 8px 16px rgba(0,0,0,0.2);
+  text-align: center;
+  color: #333;
 }
 
 h1 {
-  text-align: center;
-  color: #c0392b;
-  margin-bottom: 20px;
-  font-size: 32px;
-}
-
-#messageCount {
-  font-size: 18px;
+  font-size: 2em;
   margin-bottom: 10px;
-  text-align: center;
+  color: #d35400;
 }
-
-#app {
-  margin-bottom: 30px;
-}
-
-.message {
-  border: 2px dashed #f39c12;
-  padding: 12px;
-  margin-bottom: 15px;
-  border-radius: 12px;
-  background-color: #fffdf0;
-  position: relative;
-}
-
-/* 角色頭像樣式 */
-.message .avatar {
-  width: 60px;
-  height: 60px;
-  border-radius: 50%;
-  background-size: cover;
-  background-position: center;
-  margin-bottom: 8px;
-}
-
-.avatar.Luffy { background-image: url('images/Luffy.png'); }
-.avatar.Nami { background-image: url('images/Nami.png'); }
-.avatar.Robin { background-image: url('images/Robin.png'); }
-.avatar.Hancock { background-image: url('images/Hancock.png'); }
-.avatar.Sanji { background-image: url('images/Sanji.png'); }
-.avatar.Zoro { background-image: url('images/Zoro.png'); }
-.avatar.beauty1 { background-image: url('images/beauty1.png'); }
-.avatar.beauty2 { background-image: url('images/beauty2.png'); }
-.avatar.Special { background-image: url('images/special.png'); }
 
 form {
+  margin-bottom: 20px;
   display: flex;
   flex-direction: column;
+  align-items: center;
   gap: 10px;
 }
 
-input, textarea, select {
+input, select, textarea, button {
+  font-size: 1em;
   padding: 10px;
-  border: 1px solid #ccc;
-  border-radius: 8px;
-  font-size: 16px;
-  font-family: 'ZCOOL KuaiLe', cursive;
+  border-radius: 10px;
+  border: 2px solid #d35400;
+  width: 300px;
+  max-width: 90%;
+}
+
+textarea {
+  height: 80px;
 }
 
 button {
-  background-color: #27ae60;
+  background-color: #e67e22;
   color: white;
-  border: none;
-  padding: 12px;
-  border-radius: 8px;
-  font-size: 18px;
   cursor: pointer;
   transition: background-color 0.3s;
 }
 
 button:hover {
-  background-color: #1e8449;
+  background-color: #d35400;
 }
 
-/* ---- 以下為新增：互動畫面樣式 ---- */
-.interaction-box {
-  position: fixed;
-  bottom: 30px;
-  right: 30px;
-  background-color: rgba(255,255,255,0.95);
-  border: 4px solid #333;
-  border-radius: 12px;
-  padding: 16px 20px;
-  display: flex;
-  align-items: center;
-  box-shadow: 0 6px 12px rgba(0,0,0,0.3);
-  z-index: 1000;
-  animation: popIn 0.5s ease, fadeOut 0.5s ease 2.5s forwards;
-  font-size: 18px;
+#app {
+  margin-top: 20px;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  gap: 15px;
+}
+
+.message-card {
+  background: #fff;
+  border: 3px dashed #f39c12;
+  border-radius: 15px;
+  padding: 15px;
+  text-align: left;
+  position: relative;
+  box-shadow: 3px 3px 10px rgba(0,0,0,0.1);
+  animation: fadeInUp 0.5s ease;
+}
+
+.message-card::before {
+  content: '';
+  position: absolute;
+  top: -8px;
+  left: -8px;
+  width: 100%;
+  height: 100%;
+  border: 4px solid #ffb347;
+  border-radius: 20px;
+  transform: rotate(-2deg);
+  z-index: -1;
+}
+
+.message-card .avatar {
   font-weight: bold;
-  font-family: 'ZCOOL KuaiLe', cursive;
+  color: #2980b9;
 }
 
-.interaction-box img {
-  width: 60px;
-  height: 60px;
-  margin-right: 12px;
-  border-radius: 50%;
-  object-fit: cover;
+.buttons {
+  margin-top: 10px;
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  flex-wrap: wrap;
 }
 
-/* 彈出動畫 */
+.popup {
+  position: fixed;
+  top: 20%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: #fff3cd;
+  padding: 20px;
+  border: 3px solid #ffcc00;
+  border-radius: 15px;
+  box-shadow: 0 0 15px rgba(0,0,0,0.2);
+  z-index: 999;
+  animation: popIn 0.5s ease;
+}
+
+.popup img {
+  width: 100px;
+  height: auto;
+  display: block;
+  margin: 0 auto 10px;
+}
+
+.popup p {
+  margin: 0;
+  font-weight: bold;
+  color: #d35400;
+}
+
+.hidden {
+  display: none;
+}
+
 @keyframes popIn {
-  0% { transform: scale(0.8); opacity: 0; }
-  100% { transform: scale(1); opacity: 1; }
+  0% {
+    transform: translate(-50%, -60%) scale(0.5);
+    opacity: 0;
+  }
+  100% {
+    transform: translate(-50%, -50%) scale(1);
+    opacity: 1;
+  }
 }
 
-/* 淡出動畫 */
-@keyframes fadeOut {
-  to { opacity: 0; transform: translateY(20px); visibility: hidden; }
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
