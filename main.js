@@ -5,9 +5,9 @@ document.addEventListener("DOMContentLoaded", function () {
   const avatarSelect = document.getElementById("avatar");
   const messageInput = document.getElementById("message");
   const messageCount = document.getElementById("messageCount");
-
-  // 從 localStorage 取得留言
-  let messages = JSON.parse(localStorage.getItem("birthdayMessages") || "[]");
+  const interactionBox = document.createElement("div");
+  interactionBox.id = "interactionBox";
+  document.body.appendChild(interactionBox);
 
   const birthdayMessages = [
     "祝你天天開心、事事順利！",
@@ -18,10 +18,19 @@ document.addEventListener("DOMContentLoaded", function () {
     "願你今天的笑比昨天多，煩惱比去年少！",
     "祝你越來越帥氣，越來越有錢！",
     "Happy Birthday！願你快樂到爆炸！",
-    "年年十八，帥氣青春不打折！",
+    "年年十八，青春美麗不打折！",
     "願你所求皆如願，所行化坦途！",
     "我最崇拜Eric了!"
   ];
+
+  const interactionCharacters = [
+    { name: "Nami", img: "images/Nami.png", line: "娜美親你一下！生日快樂～" },
+    { name: "Robin", img: "images/Robin.png", line: "羅賓說：你真讓人想研究一下～" },
+    { name: "Luffy", img: "images/Luffy.png", line: "魯夫大喊：我想吃肉也想祝你生日快樂！" },
+    { name: "Hancock", img: "images/Hancock.png", line: "蛇姬臉紅了：你值得我愛！生日快樂。" }
+  ];
+
+  let messages = JSON.parse(localStorage.getItem("messages")) || [];
 
   function renderMessages() {
     app.innerHTML = "";
@@ -50,7 +59,6 @@ document.addEventListener("DOMContentLoaded", function () {
       card.addEventListener("click", () => {
         displayState = (displayState + 1) % 4;
         cardContent.innerHTML = "";
-
         if (displayState === 0) {
           cardContent.appendChild(avatarImage);
         } else if (displayState === 1) {
@@ -68,7 +76,6 @@ document.addEventListener("DOMContentLoaded", function () {
     });
 
     messageCount.textContent = `目前共有 ${messages.length} 則留言`;
-    localStorage.setItem("birthdayMessages", JSON.stringify(messages));
   }
 
   function getAvatarPath(name, avatar) {
@@ -81,23 +88,21 @@ document.addEventListener("DOMContentLoaded", function () {
     return birthdayMessages[i];
   }
 
-  function showComicPopup() {
-    const popups = [
-      "娜美親你一下！",
-      "魯夫幫你擊掌！",
-      "羅賓對你微笑～",
-      "香吉士說：你太棒了～",
-      "索隆點頭表示認可！",
-      "喬巴害羞地說：留言好可愛！"
-    ];
-    const popup = document.createElement("div");
-    popup.className = "comic-popup";
-    popup.textContent = popups[Math.floor(Math.random() * popups.length)];
-    document.body.appendChild(popup);
+  function showInteraction() {
+    const chosen = interactionCharacters[Math.floor(Math.random() * interactionCharacters.length)];
+
+    interactionBox.innerHTML = `
+      <div class="interaction-popup">
+        <img src="${chosen.img}" alt="${chosen.name}" />
+        <p>${chosen.line}</p>
+      </div>
+    `;
+
+    interactionBox.classList.add("show");
 
     setTimeout(() => {
-      popup.remove();
-    }, 2000);
+      interactionBox.classList.remove("show");
+    }, 3000);
   }
 
   form.addEventListener("submit", function (e) {
@@ -110,11 +115,12 @@ document.addEventListener("DOMContentLoaded", function () {
     if (!name || !message) return;
 
     messages.push({ name, avatar, message });
+    localStorage.setItem("messages", JSON.stringify(messages));
+
+    showInteraction();
     renderMessages();
     form.reset();
-    showComicPopup();
   });
 
-  // 初始化畫面
   renderMessages();
 });
