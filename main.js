@@ -5,9 +5,8 @@ document.addEventListener("DOMContentLoaded", function () {
   const avatarSelect = document.getElementById("avatar");
   const messageInput = document.getElementById("message");
   const messageCount = document.getElementById("messageCount");
-  const interactionBox = document.createElement("div");
-  interactionBox.id = "interactionBox";
-  document.body.appendChild(interactionBox);
+
+  let messages = JSON.parse(localStorage.getItem("birthdayMessages")) || [];
 
   const birthdayMessages = [
     "祝你天天開心、事事順利！",
@@ -23,17 +22,9 @@ document.addEventListener("DOMContentLoaded", function () {
     "我最崇拜Eric了!"
   ];
 
-  const interactionCharacters = [
-    { name: "Nami", img: "images/Nami.png", line: "娜美親你一下！生日快樂～" },
-    { name: "Robin", img: "images/Robin.png", line: "羅賓說：你真讓人想研究一下～" },
-    { name: "Luffy", img: "images/Luffy.png", line: "魯夫大喊：我想吃肉也想祝你生日快樂！" },
-    { name: "Hancock", img: "images/Hancock.png", line: "蛇姬臉紅了：你值得我愛！生日快樂。" }
-  ];
-
-  let messages = JSON.parse(localStorage.getItem("messages")) || [];
-
   function renderMessages() {
     app.innerHTML = "";
+
     messages.forEach((msg, index) => {
       const card = document.createElement("div");
       card.className = "message-card";
@@ -53,12 +44,14 @@ document.addEventListener("DOMContentLoaded", function () {
       blessing.textContent = getRandomBlessing();
 
       let displayState = 0;
+
       const cardContent = document.createElement("div");
       cardContent.appendChild(avatarImage);
 
       card.addEventListener("click", () => {
         displayState = (displayState + 1) % 4;
         cardContent.innerHTML = "";
+
         if (displayState === 0) {
           cardContent.appendChild(avatarImage);
         } else if (displayState === 1) {
@@ -88,21 +81,35 @@ document.addEventListener("DOMContentLoaded", function () {
     return birthdayMessages[i];
   }
 
-  function showInteraction() {
-    const chosen = interactionCharacters[Math.floor(Math.random() * interactionCharacters.length)];
-
-    interactionBox.innerHTML = `
-      <div class="interaction-popup">
-        <img src="${chosen.img}" alt="${chosen.name}" />
-        <p>${chosen.line}</p>
-      </div>
-    `;
-
-    interactionBox.classList.add("show");
+  function showInteraction(name) {
+    const interaction = document.createElement("div");
+    interaction.className = "interaction-popup";
+    interaction.textContent = `娜美親了 ${name} 一下！`;
+    document.body.appendChild(interaction);
 
     setTimeout(() => {
-      interactionBox.classList.remove("show");
+      interaction.remove();
     }, 3000);
+  }
+
+  function addClearButton() {
+    if (document.getElementById("clearBtn")) return;
+
+    const clearBtn = document.createElement("button");
+    clearBtn.id = "clearBtn";
+    clearBtn.textContent = "清除所有留言（僅限夏夕夏景）";
+    clearBtn.className = "clear-btn";
+
+    clearBtn.addEventListener("click", () => {
+      const confirmed = confirm("確定要清除所有留言嗎？此動作無法復原！");
+      if (confirmed) {
+        messages = [];
+        localStorage.removeItem("birthdayMessages");
+        renderMessages();
+      }
+    });
+
+    document.body.appendChild(clearBtn);
   }
 
   form.addEventListener("submit", function (e) {
@@ -115,10 +122,10 @@ document.addEventListener("DOMContentLoaded", function () {
     if (!name || !message) return;
 
     messages.push({ name, avatar, message });
-    localStorage.setItem("messages", JSON.stringify(messages));
-
-    showInteraction();
+    localStorage.setItem("birthdayMessages", JSON.stringify(messages));
     renderMessages();
+    showInteraction(name);
+    if (name === "夏夕夏景") addClearButton();
     form.reset();
   });
 
