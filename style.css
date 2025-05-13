@@ -44,6 +44,7 @@ h1 {
   position: relative;
 }
 
+/* 角色頭像樣式 */
 .message .avatar {
   width: 60px;
   height: 60px;
@@ -90,4 +91,42 @@ button {
 
 button:hover {
   background-color: #1e8449;
+}
+
+/* ---- 以下為新增：互動畫面樣式 ---- */
+.interaction-box {
+  position: fixed;
+  bottom: 30px;
+  right: 30px;
+  background-color: rgba(255,255,255,0.95);
+  border: 4px solid #333;
+  border-radius: 12px;
+  padding: 16px 20px;
+  display: flex;
+  align-items: center;
+  box-shadow: 0 6px 12px rgba(0,0,0,0.3);
+  z-index: 1000;
+  animation: popIn 0.5s ease, fadeOut 0.5s ease 2.5s forwards;
+  font-size: 18px;
+  font-weight: bold;
+  font-family: 'ZCOOL KuaiLe', cursive;
+}
+
+.interaction-box img {
+  width: 60px;
+  height: 60px;
+  margin-right: 12px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+/* 彈出動畫 */
+@keyframes popIn {
+  0% { transform: scale(0.8); opacity: 0; }
+  100% { transform: scale(1); opacity: 1; }
+}
+
+/* 淡出動畫 */
+@keyframes fadeOut {
+  to { opacity: 0; transform: translateY(20px); visibility: hidden; }
 }
