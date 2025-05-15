@@ -1,136 +1,84 @@
-dconst app = document.getElementById("app");
-const form = document.querySelector("form");
-const nameInput = document.getElementById("name");
-const messageInput = document.getElementById("message");
-const messageCount = document.getElementById("messageCount");
-const clearButton = document.getElementById("clearButton");
-const exportButton = document.getElementById("exportButton");
-const muteButton = document.getElementById("muteButton");
-const audio = document.getElementById("bgMusic");
+// main.js
 
-// 預設播放背景音樂
-window.addEventListener("load", () => {
-  audio.volume = 0.5;
-  audio.play().catch(() => {}); // 防止自動播放失敗錯誤
-});
+// 取得元素
+const messageForm = document.getElementById('messageForm');
+const nameInput = document.getElementById('name');
+const messageInput = document.getElementById('message');
+const avatarSelect = document.getElementById('avatar');
+const app = document.getElementById('app');
+const messageCount = document.getElementById('messageCount');
+const clearButton = document.getElementById('clearButton');
 
-muteButton.addEventListener("click", () => {
-  audio.muted = !audio.muted;
-  muteButton.textContent = audio.muted ? "開啟音樂" : "靜音";
-});
+// 留言清單陣列
+let messages = JSON.parse(localStorage.getItem('messages')) || [];
 
-function saveMessagesToStorage(messages) {
-  localStorage.setItem("messages", JSON.stringify(messages));
-}
-
-function getMessagesFromStorage() {
-  const stored = localStorage.getItem("messages");
-  return stored ? JSON.parse(stored) : [];
-}
-
-function updateMessageCount(count) {
-  messageCount.textContent = `目前已有 ${count} 筆悄悄話`;
-}
-
-function createMessageElement({ name, message, avatar }) {
-  const wrapper = document.createElement("div");
-  wrapper.className = "message";
-
-  const avatarDiv = document.createElement("div");
-  avatarDiv.className = `avatar ${avatar}`;
-  wrapper.appendChild(avatarDiv);
-
-  const nameP = document.createElement("p");
-  nameP.textContent = name;
-  wrapper.appendChild(nameP);
-
-  const messageP = document.createElement("p");
-  messageP.textContent = message;
-  wrapper.appendChild(messageP);
-
-  return wrapper;
-}
-
+// 更新留言列表畫面
 function renderMessages() {
-  app.innerHTML = "";
-  const messages = getMessagesFromStorage();
-  messages.forEach((msg) => {
-    const el = createMessageElement(msg);
-    app.appendChild(el);
+  app.innerHTML = '';
+  messages.forEach((msg, index) => {
+    const div = document.createElement('div');
+    div.classList.add('message-card'); // CSS裡可設計俏皮風字體
+    div.innerHTML = `
+      <div class="avatar">${msg.avatar}</div>
+      <div class="content">
+        <div class="name">${msg.name || '匿名'}</div>
+        <div class="text">${msg.message}</div>
+      </div>
+    `;
+    app.appendChild(div);
   });
-  updateMessageCount(messages.length);
+  messageCount.textContent = `目前共有 ${messages.length} 則留言`;
 }
 
-form.addEventListener("submit", (e) => {
-  e.preventDefault();
+// 存留言到 localStorage
+function saveMessages() {
+  localStorage.setItem('messages', JSON.stringify(messages));
+}
 
+// 新增留言
+messageForm.addEventListener('submit', e => {
+  e.preventDefault();
   const name = nameInput.value.trim();
   const message = messageInput.value.trim();
-  if (!name || !message) return;
+  const avatar = avatarSelect.value;
 
-  const avatars = ["Luffy", "Nami", "Robin", "Hancock", "Sanji", "Zoro", "beauty1", "beauty2"];
-  const avatar = avatars[Math.floor(Math.random() * avatars.length)];
+  if (!message) return alert('留言不能空白！');
 
-  const newMessage = { name, message, avatar };
-  const messages = getMessagesFromStorage();
-  messages.unshift(newMessage);
-  saveMessagesToStorage(messages);
+  messages.push({ name, message, avatar });
+  saveMessages();
   renderMessages();
-  form.reset();
 
-  showBlessingAnimation(avatar);
+  messageForm.reset();
 });
 
-function showBlessingAnimation(avatar) {
-  const blessings = {
-    Luffy: "魯夫大笑著祝你生日快樂！",
-    Nami: "娜美親你一下！祝你財運亨通～",
-    Robin: "羅賓靜靜送上神秘的祝福。",
-    Hancock: "女帝漢考克為你傾心傾情傾國傾城。",
-    Sanji: "香吉士深情送上甜點與玫瑰。",
-    Zoro: "索隆迷路地走來說：生日快樂。",
-    beauty1: "性感美女為你跳一支舞～",
-    beauty2: "爆乳姊姊說：你最棒了！"
-  };
-
-  const text = blessings[avatar] || "祝你幸福快樂～";
-
-  const box = document.createElement("div");
-  box.className = "blessing-box";
-  box.innerHTML = `
-    <div class="avatar ${avatar}"></div>
-    <p>${text}</p>
-  `;
-  document.body.appendChild(box);
-
-  setTimeout(() => {
-    box.classList.add("fade-out");
-    setTimeout(() => document.body.removeChild(box), 1000);
-  }, 5000);
+// 清除留言：先要求輸入密碼，成功後顯示清除按鈕
+function promptClearPassword() {
+  const pw = prompt('請輸入管理密碼以清除所有留言');
+  if (pw === '夏夕夏景') {
+    clearButton.style.display = 'inline-block';
+  } else {
+    alert('密碼錯誤！');
+  }
 }
 
-clearButton.addEventListener("click", () => {
-  if (confirm("你確定要清空所有留言嗎？")) {
-    localStorage.removeItem("messages");
+// 按下清除按鈕清空留言
+clearButton.addEventListener('click', () => {
+  if (confirm('確定要清空所有留言嗎？')) {
+    messages = [];
+    saveMessages();
     renderMessages();
+    clearButton.style.display = 'none';
   }
 });
 
-exportButton.addEventListener("click", () => {
-  const messages = getMessagesFromStorage();
-  const csvContent =
-    "data:text/csv;charset=utf-8," +
-    ["名字,留言內容"]
-      .concat(messages.map((m) => `${m.name},${m.message.replace(/\n/g, " ")}`))
-      .join("\n");
-
-  const encodedUri = encodeURI(csvContent);
-  const link = document.createElement("a");
-  link.setAttribute("href", encodedUri);
-  link.setAttribute("download", "留言板匯出.csv");
-  document.body.appendChild(link);
-  link.click();
-  document.body.removeChild(link);
-});
-
+// 第一次載入渲染留言
 renderMessages();
+
+// 用戶輸入名字欄，當輸入為「夏夕夏景」自動呼叫密碼驗證
+nameInput.addEventListener('input', e => {
+  if (e.target.value.trim() === '夏夕夏景') {
+    promptClearPassword();
+  } else {
+    clearButton.style.display = 'none';
+  }
+});
