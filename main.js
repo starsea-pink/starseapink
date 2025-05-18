@@ -17,10 +17,10 @@ const blessings = [
   "感謝你的存在，祝你幸福滿滿！"
 ];
 
-// 讀取留言（localStorage）
-let messages = JSON.parse(localStorage.getItem("messages") || "[]");
+// 初始讀取留言
+let messages = JSON.parse(localStorage.getItem("messages")) || [];
 
-// 渲染所有留言
+// 渲染留言
 function renderMessages() {
   app.innerHTML = "";
   messages.forEach((msg) => {
@@ -59,11 +59,11 @@ function renderMessages() {
   document.getElementById("messageCount").textContent = `目前共有 ${messages.length} 則悶騷留言`;
 }
 
-// 第一次互動才播放音樂
+// 點擊互動才播放音樂（行動裝置限制）
 document.body.addEventListener("click", () => {
   if (!hasInteracted) {
-    bgm.play().catch((err) => {
-      console.warn("音樂播放失敗：", err);
+    bgm.play().catch(() => {
+      console.warn("音樂播放失敗");
     });
     hasInteracted = true;
   }
@@ -87,35 +87,24 @@ form.addEventListener("submit", (e) => {
   if (name === "夏夕夏景") {
     if (confirm("你確定要清除所有留言嗎？")) {
       messages = [];
-      localStorage.setItem("messages", JSON.stringify(messages));
+      localStorage.removeItem("messages");
       renderMessages();
     }
     form.reset();
     return;
   }
 
-  if (name && message && character) {
-    messages.unshift({ name, message, character });
+  if (name && message) {
+    let finalCharacter = character;
+    if (name === "小屁股蛋") {
+      finalCharacter = "special"; // 專屬角色圖片
+    }
+
+    messages.unshift({ name, message, character: finalCharacter });
     localStorage.setItem("messages", JSON.stringify(messages));
     renderMessages();
     form.reset();
   }
 });
 
-// 匯出留言功能
-const exportButton = document.createElement("button");
-exportButton.textContent = "匯出留言";
-exportButton.style.marginTop = "20px";
-exportButton.onclick = () => {
-  const blob = new Blob([JSON.stringify(messages, null, 2)], { type: "application/json" });
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement("a");
-  a.href = url;
-  a.download = "留言匯出.json";
-  a.click();
-  URL.revokeObjectURL(url);
-};
-document.body.appendChild(exportButton);
-
-// 初始化
 renderMessages();
