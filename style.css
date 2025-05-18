@@ -1,68 +1,103 @@
 body {
-  font-family: 'Comic Sans MS', 'cursive', sans-serif;
-  background-image: url("images/background.png");
+  font-family: "Microsoft JhengHei", sans-serif;
+  background-image: url('images/background.jpg');
   background-size: cover;
-  background-repeat: no-repeat;
-  background-position: center;
+  background-attachment: fixed;
   margin: 0;
   padding: 0;
-}
-
-.container {
-  max-width: 800px;
-  margin: auto;
-  background: rgba(255, 255, 255, 0.85);
-  padding: 20px;
-  border-radius: 15px;
-  box-shadow: 0 0 10px #999;
-  margin-top: 40px;
+  text-align: center;
+  color: #333;
 }
 
 h1 {
-  text-align: center;
-  color: #ff69b4;
-  font-size: 2em;
+  margin-top: 20px;
+  font-size: 2rem;
+  color: #ff5e5e;
 }
 
 form {
-  margin-top: 20px;
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
+  margin: 20px auto;
+  max-width: 400px;
+  padding: 20px;
+  background: rgba(255, 255, 255, 0.85);
+  border-radius: 10px;
+  box-shadow: 0 0 10px #ccc;
 }
 
 input, textarea, select, button {
-  font-size: 16px;
-  padding: 10px;
-  border-radius: 8px;
+  display: block;
+  width: 100%;
+  margin-bottom: 10px;
+  font-size: 1rem;
+  padding: 8px;
+  border-radius: 5px;
   border: 1px solid #ccc;
 }
 
 button {
-  background-color: #ffccff;
+  background-color: #ff5e5e;
+  color: white;
   border: none;
   cursor: pointer;
-  transition: background 0.3s;
 }
 
 button:hover {
-  background-color: #ff99cc;
+  background-color: #ff3d3d;
+}
+
+#messageCount {
+  margin: 20px 0;
+  font-weight: bold;
+  color: #444;
+}
+
+#app {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 20px;
+  padding: 20px;
 }
 
 .message {
+  width: 200px;
+  background: rgba(255, 255, 255, 0.9);
+  border-radius: 10px;
+  padding: 15px;
   text-align: center;
-  margin-top: 20px;
+  box-shadow: 0 0 10px #bbb;
+  transition: transform 0.2s ease;
+  animation: fadeInUp 0.5s ease;
+}
+
+.message:hover {
+  animation: shake 0.3s;
+  animation-iteration-count: 1;
 }
 
 .message img {
-  width: 150px;
+  width: 100px;
   height: auto;
-  border-radius: 10px;
+  margin-bottom: 10px;
 }
 
-.message p {
-  margin-top: 10px;
-  font-size: 1.1em;
-  font-weight: bold;
-  color: #333;
+/* 淡入動畫 */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* 搖晃動畫 */
+@keyframes shake {
+  0% { transform: translateX(0); }
+  25% { transform: translateX(-3px); }
+  50% { transform: translateX(3px); }
+  75% { transform: translateX(-2px); }
+  100% { transform: translateX(0); }
 }

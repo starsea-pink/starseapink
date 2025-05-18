@@ -56,7 +56,7 @@ function renderMessages() {
     app.appendChild(div);
   });
 
-  document.getElementById("messageCount").textContent = `目前共有 ${messages.length} 則悶騷留言`;
+  document.getElementById("messageCount").textContent = `偷偷偷偷~目前有 ${messages.length} 則悶騷擊爆在這裡等你發覺!`;
 }
 
 // 點擊互動才播放音樂（行動裝置限制）
