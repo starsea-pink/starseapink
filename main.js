@@ -18,7 +18,7 @@ const blessings = [
   "感謝你的存在，祝你幸福滿滿！"
 ];
 
-// 渲染所有留言
+// 渲染留言
 function renderMessages() {
   app.innerHTML = "";
   messages.forEach((msg) => {
@@ -57,29 +57,31 @@ function renderMessages() {
   document.getElementById("messageCount").textContent = `目前共有 ${messages.length} 則悶騷留言`;
 }
 
-// 第一次互動才播放音樂
+// 使用者第一次互動時播放音樂
 document.body.addEventListener("click", () => {
   if (!hasInteracted) {
-    bgm.play().catch(() => {});
+    bgm.play().catch((e) => {
+      console.warn("音樂播放失敗：", e);
+    });
     hasInteracted = true;
   }
 });
 
-// 靜音功能
+// 靜音切換
 muteButton.addEventListener("click", () => {
   isMuted = !isMuted;
   bgm.muted = isMuted;
   muteButton.textContent = isMuted ? "播放音樂" : "靜音";
 });
 
-// 表單送出
+// 送出留言
 form.addEventListener("submit", (e) => {
   e.preventDefault();
   const name = nameInput.value.trim();
   const message = messageInput.value.trim();
-  const character = characterSelect.value.trim();
+  let character = characterSelect.value.trim();
 
-  // 清除留言密碼
+  // 清除密碼
   if (name === "夏夕夏景") {
     if (confirm("你確定要清除所有留言嗎？")) {
       messages = [];
@@ -87,6 +89,11 @@ form.addEventListener("submit", (e) => {
     }
     form.reset();
     return;
+  }
+
+  // 若輸入「小屁股蛋」，直接指定特殊角色圖
+  if (name.includes("小屁股蛋")) {
+    character = "Special";
   }
 
   if (name && message && character) {
