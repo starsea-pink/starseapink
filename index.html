@@ -8,15 +8,11 @@
   <link rel="icon" href="favicon.ico" type="image/x-icon">
 </head>
 <body>
-  <!-- 音樂 -->
-  <audio id="bgm" src="Endworld.mp3" autoplay loop></audio>
-  <button id="muteButton">靜音</button>
-
+  <audio id="bgm" src="music/Endofworld.mp3"  loop></audio><button id="muteButton">靜音</button>
   <div class="container">
     <h1>蒟蒻信的悶騷生日留言板</h1>
     <div id="messageCount"></div>
-    
-    <!-- 留言輸入表單 -->
+    <div id="app"></div>
     <form id="messageForm">
       <input type="text" id="name" placeholder="你的名字（可匿名）" required />
       <textarea id="message" placeholder="寫下你想說的話..." rows="4" required></textarea>
@@ -33,15 +29,8 @@
       </select>
       <button type="submit">送出留言</button>
     </form>
-
-    <!-- 留言顯示區 -->
-    <div id="app"></div>
-
-    <!-- 清除與匯出按鈕 -->
-    <button id="clearButton" style="display:none">清空所有留言</button>
-    <button id="exportButton">匯出留言</button>
+    <button id="muteButton">靜音</button>
   </div>
-
   <script src="main.js"></script>
 </body>
 </html>
