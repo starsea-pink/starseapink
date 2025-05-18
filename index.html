@@ -1,24 +1,26 @@
 <!DOCTYPE html>
-<html lang="zh-TW">
+<html lang="zh-Hant">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>蒟蒻信的悶騷生日留言板</title>
   <link rel="stylesheet" href="style.css" />
-  <link rel="icon" href="favicon.ico" type="image/x-icon" />
+  <link rel="icon" href="favicon.ico" type="image/x-icon">
 </head>
 <body>
-  <!-- 背景音樂 -->
-  <audio id="bgm" src="Endworld.mp3" autoplay loop hidden></audio>
+  <!-- 音樂 -->
+  <audio id="bgm" src="Endworld.mp3" autoplay loop></audio>
+  <button id="muteButton">靜音</button>
 
   <div class="container">
     <h1>蒟蒻信的悶騷生日留言板</h1>
-    <div id="messageCount">目前共有 0 則留言</div>
-    <div id="app"></div>
-
+    <div id="messageCount"></div>
+    
+    <!-- 留言輸入表單 -->
     <form id="messageForm">
       <input type="text" id="name" placeholder="你的名字（可匿名）" required />
-      <select id="avatar">
+      <textarea id="message" placeholder="寫下你想說的話..." rows="4" required></textarea>
+      <select id="character">
         <option value="Luffy">魯夫</option>
         <option value="Nami">娜美</option>
         <option value="Robin">羅賓</option>
@@ -29,12 +31,15 @@
         <option value="beauty2">大胸美女2</option>
         <option value="Special">驚喜角色</option>
       </select>
-      <textarea id="message" placeholder="寫下你想說的話..." rows="4" required></textarea>
       <button type="submit">送出留言</button>
     </form>
 
-    <!-- 清除留言按鈕，預設隱藏 -->
+    <!-- 留言顯示區 -->
+    <div id="app"></div>
+
+    <!-- 清除與匯出按鈕 -->
     <button id="clearButton" style="display:none">清空所有留言</button>
+    <button id="exportButton">匯出留言</button>
   </div>
 
   <script src="main.js"></script>
