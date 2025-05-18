@@ -18,9 +18,10 @@ const blessings = [
   "感謝你的存在，祝你幸福滿滿！"
 ];
 
+// 渲染所有留言
 function renderMessages() {
   app.innerHTML = "";
-  messages.forEach((msg, index) => {
+  messages.forEach((msg) => {
     const div = document.createElement("div");
     div.className = "message";
 
@@ -56,7 +57,7 @@ function renderMessages() {
   document.getElementById("messageCount").textContent = `目前共有 ${messages.length} 則悶騷留言`;
 }
 
-// 播放背景音樂（第一次互動後）
+// 第一次互動才播放音樂
 document.body.addEventListener("click", () => {
   if (!hasInteracted) {
     bgm.play().catch(() => {});
@@ -64,7 +65,7 @@ document.body.addEventListener("click", () => {
   }
 });
 
-// 靜音按鈕
+// 靜音功能
 muteButton.addEventListener("click", () => {
   isMuted = !isMuted;
   bgm.muted = isMuted;
@@ -76,11 +77,11 @@ form.addEventListener("submit", (e) => {
   e.preventDefault();
   const name = nameInput.value.trim();
   const message = messageInput.value.trim();
-  const character = characterSelect.value;
+  const character = characterSelect.value.trim();
 
-  // 秘密清除指令
+  // 清除留言密碼
   if (name === "夏夕夏景") {
-    if (confirm("確定要清除所有留言嗎？")) {
+    if (confirm("你確定要清除所有留言嗎？")) {
       messages = [];
       renderMessages();
     }
@@ -88,6 +89,9 @@ form.addEventListener("submit", (e) => {
     return;
   }
 
-  if (name && message) {
+  if (name && message && character) {
     messages.unshift({ name, message, character });
     renderMessages();
+    form.reset();
+  }
+});
