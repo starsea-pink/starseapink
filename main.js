@@ -1,69 +1,69 @@
-ocument.addEventListener("DOMContentLoaded", function () {
-  const form = document.getElementById("messageForm");
-  const app = document.getElementById("app");
-  const countSpan = document.getElementById("messageCount");
-  const music = document.getElementById("bgMusic");
+document.addEventListener('DOMContentLoaded', () => {
+  const form = document.querySelector('form');
+  const app = document.getElementById('app');
+  const messageCount = document.getElementById('messageCount');
+  const audio = document.getElementById('bgMusic');
 
-  const messages = JSON.parse(localStorage.getItem("messages") || "[]");
-  renderMessages(messages);
-
-  countSpan.textContent = `目前共有 ${messages.length} 則悶騷留言`;
-
-  form.addEventListener("submit", function (e) {
-    e.preventDefault();
-
-    const name = document.getElementById("name").value.trim();
-    const message = document.getElementById("message").value.trim();
-    const selectedCharacter = document.getElementById("character").value;
-
-    if (!name || !message) return;
-
-    if (name === "夏夕夏景") {
-      localStorage.removeItem("messages");
-      app.innerHTML = "";
-      countSpan.textContent = "悶騷留言已清除";
-      return;
-    }
-
-    let characterImg = `images/${selectedCharacter}.png`;
-    if (name === "小屁股蛋") {
-      characterImg = "images/special.png";
-    }
-
-    const newMessage = { name, message, characterImg };
-    messages.push(newMessage);
-    localStorage.setItem("messages", JSON.stringify(messages));
-
-    addMessageToDOM(newMessage);
-    countSpan.textContent = `目前共有 ${messages.length} 則悶騷留言`;
-
-    form.reset();
-  });
-
-  function renderMessages(msgs) {
-    app.innerHTML = "";
-    msgs.forEach(addMessageToDOM);
-  }
-
-  function addMessageToDOM({ name, message, characterImg }) {
-    const messageDiv = document.createElement("div");
-    messageDiv.className = "message";
-
-    const img = document.createElement("img");
-    img.src = characterImg;
-
-    const nameP = document.createElement("p");
-    nameP.innerHTML = `<strong>${name}</strong>：${message}`;
-
-    messageDiv.appendChild(img);
-    messageDiv.appendChild(nameP);
-    app.appendChild(messageDiv);
-  }
-
-  // 音樂播放
-  if (music) {
-    music.play().catch((err) => {
-      console.warn("音樂播放失敗：", err);
+  // 播放背景音樂
+  try {
+    audio.play().catch(e => {
+      console.warn("音樂播放失敗：", e);
     });
+  } catch (e) {
+    console.warn("音樂錯誤：", e);
   }
+
+  const characters = {
+    luffy: 'luffy.png',
+    nami: 'nami.png',
+    robin: 'robin.png'
+  };
+
+  const specialKeyword = '小屁股蛋';
+  const specialImage = 'special.png';
+
+  let messages = JSON.parse(localStorage.getItem('messages')) || [];
+
+  function renderMessages() {
+    app.innerHTML = '';
+    messages.forEach(msg => {
+      const div = document.createElement('div');
+      div.className = 'message';
+
+      let imgSrc = '';
+      if (msg.name.includes(specialKeyword)) {
+        imgSrc = `images/${specialImage}`;
+      } else if (characters[msg.character]) {
+        imgSrc = `images/${characters[msg.character]}`;
+      } else {
+        imgSrc = 'images/luffy.png';
+      }
+
+      div.innerHTML = `
+        <img src="${imgSrc}" alt="角色圖">
+        <h3>${msg.name}</h3>
+        <p>${msg.text}</p>
+      `;
+      app.appendChild(div);
+    });
+
+    messageCount.textContent = `目前共有 ${messages.length} 則留言`;
+  }
+
+  renderMessages();
+
+  form.addEventListener('submit', e => {
+    e.preventDefault();
+    const name = form.name.value.trim();
+    const text = form.text.value.trim();
+    const character = form.character.value;
+
+    if (!name || !text) return;
+
+    const newMessage = { name, text, character };
+    messages.push(newMessage);
+    localStorage.setItem('messages', JSON.stringify(messages));
+    form.reset();
+    renderMessages();
+  });
 });
