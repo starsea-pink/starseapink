@@ -6,7 +6,6 @@ const characterSelect = document.getElementById("character");
 const bgm = document.getElementById("bgm");
 const muteButton = document.getElementById("muteButton");
 
-let messages = [];
 let isMuted = false;
 let hasInteracted = false;
 
@@ -18,7 +17,10 @@ const blessings = [
   "感謝你的存在，祝你幸福滿滿！"
 ];
 
-// 渲染留言
+// 讀取留言（localStorage）
+let messages = JSON.parse(localStorage.getItem("messages") || "[]");
+
+// 渲染所有留言
 function renderMessages() {
   app.innerHTML = "";
   messages.forEach((msg) => {
@@ -57,48 +59,63 @@ function renderMessages() {
   document.getElementById("messageCount").textContent = `目前共有 ${messages.length} 則悶騷留言`;
 }
 
-// 使用者第一次互動時播放音樂
+// 第一次互動才播放音樂
 document.body.addEventListener("click", () => {
   if (!hasInteracted) {
-    bgm.play().catch((e) => {
-      console.warn("音樂播放失敗：", e);
+    bgm.play().catch((err) => {
+      console.warn("音樂播放失敗：", err);
     });
     hasInteracted = true;
   }
 });
 
-// 靜音切換
+// 靜音功能
 muteButton.addEventListener("click", () => {
   isMuted = !isMuted;
   bgm.muted = isMuted;
   muteButton.textContent = isMuted ? "播放音樂" : "靜音";
 });
 
-// 送出留言
+// 表單送出
 form.addEventListener("submit", (e) => {
   e.preventDefault();
   const name = nameInput.value.trim();
   const message = messageInput.value.trim();
-  let character = characterSelect.value.trim();
+  const character = characterSelect.value.trim();
 
-  // 清除密碼
+  // 清除留言密碼
   if (name === "夏夕夏景") {
     if (confirm("你確定要清除所有留言嗎？")) {
       messages = [];
+      localStorage.setItem("messages", JSON.stringify(messages));
       renderMessages();
     }
     form.reset();
     return;
   }
 
-  // 若輸入「小屁股蛋」，直接指定特殊角色圖
-  if (name.includes("小屁股蛋")) {
-    character = "Special";
-  }
-
   if (name && message && character) {
     messages.unshift({ name, message, character });
+    localStorage.setItem("messages", JSON.stringify(messages));
     renderMessages();
     form.reset();
   }
 });
+
+// 匯出留言功能
+const exportButton = document.createElement("button");
+exportButton.textContent = "匯出留言";
+exportButton.style.marginTop = "20px";
+exportButton.onclick = () => {
+  const blob = new Blob([JSON.stringify(messages, null, 2)], { type: "application/json" });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = "留言匯出.json";
+  a.click();
+  URL.revokeObjectURL(url);
+};
+document.body.appendChild(exportButton);
+
+// 初始化
+renderMessages();
