@@ -17,20 +17,22 @@
     <div id="app"></div>
 
     <form id="messageForm">
-      <input type="text" id="name" placeholder="你的名字（可匿名）" required />
-      <textarea id="message" placeholder="寫下你想說的話..." rows="4" required></textarea>
-      <select id="character">
-        <option value="Luffy">魯夫</option>
-        <option value="Nami">娜美</option>
-        <option value="Robin">羅賓</option>
-        <option value="Hancock">漢考克</option>
-        <option value="Sanji">香吉士</option>
-        <option value="Zoro">索隆</option>
-        <option value="beauty1">大胸美女1</option>
-        <option value="beauty2">大胸美女2</option>
-      </select>
-      <button type="submit">送出留言</button>
-    </form>
+  <label for="name">你的悶騷代號（別害羞～）</label>
+  <input type="text" id="name" placeholder="蒟蒻神、火拳哥、牛奶控...都行啦">
+
+  <label for="message">悄悄話 or 噴火彈</label>
+  <textarea id="message" placeholder="寫下你最想對壽星說的話～也可以亂告白試試看！"></textarea>
+
+  <label for="character">派誰出場代表你？</label>
+  <select id="character">
+    <option value="luffy">魯夫</option>
+    <option value="nami">娜美</option>
+    <option value="robin">羅賓</option>
+    <!-- 可自行加入其他角色 -->
+  </select>
+
+  <button type="submit">投下悶騷炸彈！</button>
+</form>
   </div>
 
   <script src="main.js"></script>
