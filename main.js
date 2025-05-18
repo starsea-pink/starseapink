@@ -1,100 +1,114 @@
-const app = document.getElementById("app");
-const form = document.getElementById("messageForm");
+const messageForm = document.getElementById("messageForm");
 const nameInput = document.getElementById("name");
 const messageInput = document.getElementById("message");
 const characterSelect = document.getElementById("character");
-const audio = document.getElementById("bgm");
+const app = document.getElementById("app");
+const clearButton = document.getElementById("clearButton");
 const muteButton = document.getElementById("muteButton");
+const messageCount = document.getElementById("messageCount");
 
-let messages = [];
+let isMuted = false;
+const bgm = document.getElementById("bgm");
+bgm.volume = 0.5;
 
-const wishes = [
-  "生日快樂！天天開心！",
-  "願你擁有美好的一年！",
-  "幸福快樂每一天～",
-  "快樂不打烊！",
-  "年年有今日、歲歲有今朝～",
-  "祝你心想事成！",
+const birthdayMessages = [
+  "生日快樂！願你天天開心！",
+  "祝你笑口常開，天天幸福！",
+  "願你今年特別順利！",
+  "願你心想事成，萬事如意！",
+  "祝你健康快樂，幸福滿滿！",
+  "年年有今日，歲歲有今朝！",
 ];
 
-const characterImages = {
-  Luffy: "img/luffy.png",
-  Nami: "img/nami.png",
-  Robin: "img/robin.png",
-  Hancock: "img/hancock.png",
-  Sanji: "img/sanji.png",
-  Zoro: "img/zoro.png",
-  beauty1: "img/beauty1.png",
-  beauty2: "img/beauty2.png",
-  Special: "img/special.png",
-};
+let messages = JSON.parse(localStorage.getItem("messages")) || [];
 
 function renderMessages() {
   app.innerHTML = "";
   messages.forEach((msg, index) => {
-    const box = document.createElement("div");
-    box.className = "message-box";
+    const div = document.createElement("div");
+    div.className = "message";
 
     const img = document.createElement("img");
-    img.src = characterImages[msg.character] || "img/default.png";
-    img.className = "character-img";
+    img.src = `images/${msg.character}.png`;
+    img.alt = msg.character;
 
-    const text = document.createElement("div");
-    text.className = "message-text";
-    text.innerText = msg.character;
+    const p = document.createElement("p");
+    p.innerText = msg.name;
 
-    let state = 0;
-    box.onclick = () => {
-      state = (state + 1) % 4;
-      switch (state) {
-        case 0:
-          img.style.display = "block";
-          text.innerText = msg.character;
-          break;
-        case 1:
-          img.style.display = "none";
-          text.innerText = msg.name + "\n" + msg.message;
-          break;
-        case 2:
-          img.style.display = "none";
-          text.innerText = wishes[Math.floor(Math.random() * wishes.length)];
-          break;
-        case 3:
-          img.style.display = "block";
-          text.innerText = msg.character;
-          break;
+    let clickCount = 0;
+
+    div.appendChild(img);
+    div.appendChild(p);
+
+    div.addEventListener("click", () => {
+      clickCount++;
+      if (clickCount === 1) {
+        p.innerText = msg.message;
+      } else if (clickCount === 2) {
+        p.innerText =
+          birthdayMessages[Math.floor(Math.random() * birthdayMessages.length)];
+      } else if (clickCount === 3) {
+        p.innerText = msg.name;
+        clickCount = 0;
       }
-    };
+    });
 
-    box.appendChild(img);
-    box.appendChild(text);
-    app.appendChild(box);
+    app.appendChild(div);
   });
+
+  messageCount.innerText = `共有 ${messages.length} 則留言`;
 }
 
-form.onsubmit = (e) => {
+messageForm.addEventListener("submit", (e) => {
   e.preventDefault();
+
   const name = nameInput.value.trim();
   const message = messageInput.value.trim();
   const character = characterSelect.value;
 
-  if (!name || !message) return;
+  if (name === "" || message === "") return;
 
   if (name === "夏夕夏景") {
-    messages = [];
-    renderMessages();
-    alert("留言已清除！");
-    form.reset();
+    const pw = prompt("請輸入密碼才能清除留言：");
+    if (pw === "夏夕夏景") {
+      messages = [];
+      localStorage.setItem("messages", JSON.stringify(messages));
+      renderMessages();
+      alert("留言已清除！");
+    } else {
+      alert("密碼錯誤！");
+    }
+    nameInput.value = "";
+    messageInput.value = "";
     return;
   }
 
-  messages.unshift({ name, message, character });
-  renderMessages();
-  form.reset();
-};
+  messages.push({ name, message, character });
+  localStorage.setItem("messages", JSON.stringify(messages));
 
-// 音樂控制
-muteButton.onclick = () => {
-  audio.muted = !audio.muted;
-  muteButton.innerText = audio.muted ? "播放音樂" : "靜音";
-};
+  nameInput.value = "";
+  messageInput.value = "";
+  characterSelect.value = "Luffy";
+
+  renderMessages();
+});
+
+clearButton.addEventListener("click", () => {
+  const pw = prompt("請輸入密碼才能清除留言：");
+  if (pw === "夏夕夏景") {
+    messages = [];
+    localStorage.setItem("messages", JSON.stringify(messages));
+    renderMessages();
+    alert("留言已清除！");
+  } else {
+    alert("密碼錯誤！");
+  }
+});
+
+muteButton.addEventListener("click", () => {
+  isMuted = !isMuted;
+  bgm.muted = isMuted;
+  muteButton.innerText = isMuted ? "播放音樂" : "靜音";
+});
+
+renderMessages();
