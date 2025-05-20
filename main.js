@@ -16,7 +16,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   });
 
-  // 預設播放音樂
+  // 嘗試預設播放
   try {
     audio.play();
     musicToggle.textContent = '暫停音樂';
@@ -24,7 +24,6 @@ document.addEventListener('DOMContentLoaded', () => {
     console.warn("自動播放被阻擋，請手動點擊播放。");
   }
 
-  // 對應角色與圖檔名稱（11 張圖）
   const characters = {
     luffy: 'Luffy.png',
     zoro: 'Zoro.png',
@@ -34,7 +33,9 @@ document.addEventListener('DOMContentLoaded', () => {
     chopper: 'Chopper.png',
     hancock: 'Hancock.png',
     beauty1: 'beauty1.png',
-    beauty2: 'beauty2.png'
+    beauty2: 'beauty2.png',
+    usopp: 'Usopp.png',
+    franky: 'Franky.png'
   };
 
   const specialKeyword = '小屁股蛋';
@@ -55,7 +56,7 @@ document.addEventListener('DOMContentLoaded', () => {
       } else if (characters[msg.character]) {
         imgSrc = `images/${characters[msg.character]}`;
       } else {
-        imgSrc = 'images/Luffy.png'; // fallback 預設顯示魯夫
+        imgSrc = 'images/Luffy.png';
       }
 
       div.innerHTML = `
@@ -74,7 +75,7 @@ document.addEventListener('DOMContentLoaded', () => {
   form.addEventListener('submit', e => {
     e.preventDefault();
     const name = form.name.value.trim();
-    const text = form.text.value.trim();
+    const text = form.message.value.trim();
     const character = form.character.value;
 
     if (!name || !text) return;

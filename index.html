@@ -8,8 +8,8 @@
   <link rel="icon" href="favicon.ico" type="image/x-icon">
 </head>
 <body>
-  <audio id="bgm" src="music/Endofworld.mp3" loop></audio>
-  <button id="muteButton">靜音</button>
+  <audio id="bgMusic" src="music/Endofworld.mp3" loop></audio>
+  <button id="musicToggle">播放/暫停音樂</button>
 
   <div class="container">
     <h1>蒟蒻信的悶騷生日留言板</h1>
@@ -17,22 +17,30 @@
     <div id="app"></div>
 
     <form id="messageForm">
-  <label for="name">你的悶騷代號（別害羞～）</label>
-  <input type="text" id="name" placeholder="蒟蒻神、火拳哥、牛奶控...都行啦">
+      <label for="name">你的悶騷代號（別害羞～）</label>
+      <input type="text" id="name" placeholder="蒟蒻神、火拳哥、牛奶控...都行啦">
 
-  <label for="message">悄悄話 or 噴火彈</label>
-  <textarea id="message" placeholder="寫下你最想對壽星說的話～也可以亂告白試試看！"></textarea>
+      <label for="message">悄悄話 or 噴火彈</label>
+      <textarea id="message" placeholder="寫下你最想對壽星說的話～也可以亂告白試試看！"></textarea>
 
-  <label for="character">派誰出場代表你？</label>
-  <select id="character">
-    <option value="luffy">魯夫</option>
-    <option value="nami">娜美</option>
-    <option value="robin">羅賓</option>
-    <!-- 可自行加入其他角色 -->
-  </select>
+      <label for="character">派誰出場代表你？</label>
+      <select id="character">
+        <option value="Luffy">魯夫</option>
+        <option value="Zoro">索隆</option>
+        <option value="Nami">娜美</option>
+        <option value="Robin">羅賓</option>
+        <option value="Sanji">香吉士</option>
+        <option value="Chopper">喬巴</option>
+        <option value="Hancock">女帝</option>
+        <option value="Beauty1">爆乳1</option>
+        <option value="Beauty2">爆乳2</option>
+        <option value="Usopp">騙人布</option>
+        <option value="Franky">佛朗基</option>
+        <option value="Special">小屁股蛋</option>
+      </select>
 
-  <button type="submit">投下悶騷炸彈！</button>
-</form>
+      <button type="submit">投下悶騷炸彈！</button>
+    </form>
   </div>
 
   <script src="main.js"></script>
