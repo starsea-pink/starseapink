@@ -1,9 +1,9 @@
 document.addEventListener('DOMContentLoaded', () => {
-  const form = document.getElementById('commentForm');
+  const form = document.getElementById('messageForm');
   const app = document.getElementById('app');
   const messageCount = document.getElementById('messageCount');
-  const audio = document.getElementById('bgm');
-  const muteButton = document.getElementById('muteButton');
+  const audio = document.getElementById('bgMusic');
+  const muteButton = document.getElementById('musicToggle');
 
   const characters = {
     luffy: 'Luffy.png',
@@ -63,7 +63,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
     if (!name) return;
 
-    // 隱藏指令：清除
     if (name === "夏夕夏景") {
       localStorage.removeItem('messages');
       messages = [];
@@ -84,7 +83,6 @@ document.addEventListener('DOMContentLoaded', () => {
     form.reset();
   });
 
-  // 音樂控制
   muteButton.addEventListener('click', () => {
     if (audio.paused) {
       audio.play();

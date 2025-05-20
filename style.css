@@ -1,103 +1,138 @@
+/* 字體設定與背景 */
 body {
-  font-family: "Microsoft JhengHei", sans-serif;
-  background-image: url('images/background.jpg');
-  background-size: cover;
-  background-attachment: fixed;
   margin: 0;
   padding: 0;
+  font-family: "Noto Sans TC", "Microsoft JhengHei", sans-serif;
+  background-image: url("images/background.jpg");
+  background-size: cover;
+  background-position: center;
+  background-attachment: fixed;
+  color: #fff;
+  line-height: 1.6;
+}
+
+/* 外層容器 */
+.container {
+  max-width: 700px;
+  margin: 50px auto;
+  background: rgba(0, 0, 0, 0.7);
+  padding: 30px;
+  border-radius: 20px;
+  box-shadow: 0 0 20px rgba(255, 255, 255, 0.1);
+}
+
+/* 標題樣式 */
+.container h1 {
+  font-size: 28px;
   text-align: center;
-  color: #333;
+  margin-bottom: 20px;
+  letter-spacing: 2px;
+  color: #ffd369;
 }
 
-h1 {
-  margin-top: 20px;
-  font-size: 2rem;
-  color: #ff5e5e;
-}
-
-form {
-  margin: 20px auto;
-  max-width: 400px;
-  padding: 20px;
-  background: rgba(255, 255, 255, 0.85);
-  border-radius: 10px;
-  box-shadow: 0 0 10px #ccc;
-}
-
-input, textarea, select, button {
-  display: block;
-  width: 100%;
-  margin-bottom: 10px;
-  font-size: 1rem;
-  padding: 8px;
-  border-radius: 5px;
-  border: 1px solid #ccc;
-}
-
-button {
-  background-color: #ff5e5e;
-  color: white;
-  border: none;
-  cursor: pointer;
-}
-
-button:hover {
-  background-color: #ff3d3d;
-}
-
+/* 留言統計數 */
 #messageCount {
-  margin: 20px 0;
-  font-weight: bold;
-  color: #444;
-}
-
-#app {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  gap: 20px;
-  padding: 20px;
-}
-
-.message {
-  width: 200px;
-  background: rgba(255, 255, 255, 0.9);
-  border-radius: 10px;
-  padding: 15px;
   text-align: center;
-  box-shadow: 0 0 10px #bbb;
-  transition: transform 0.2s ease;
-  animation: fadeInUp 0.5s ease;
+  margin-bottom: 20px;
+  font-size: 18px;
+  color: #eee;
 }
 
-.message:hover {
-  animation: shake 0.3s;
-  animation-iteration-count: 1;
+/* 表單區塊 */
+form label {
+  font-weight: bold;
+  margin-top: 15px;
+  display: block;
+  color: #f1f1f1;
+}
+
+form input,
+form textarea,
+form select {
+  width: 100%;
+  padding: 10px;
+  margin-top: 6px;
+  margin-bottom: 12px;
+  border: none;
+  border-radius: 8px;
+  font-size: 16px;
+  background: #f0f0f0;
+  color: #333;
+  box-sizing: border-box;
+}
+
+form textarea {
+  height: 80px;
+  resize: vertical;
+}
+
+form button {
+  background: #ff8c00;
+  color: #fff;
+  font-size: 18px;
+  border: none;
+  border-radius: 10px;
+  padding: 12px;
+  width: 100%;
+  cursor: pointer;
+  transition: background 0.3s ease;
+}
+
+form button:hover {
+  background: #ffa733;
+}
+
+/* 單則留言卡片 */
+.message {
+  background: rgba(255, 255, 255, 0.15);
+  padding: 16px;
+  border-radius: 12px;
+  margin-top: 15px;
+  display: flex;
+  align-items: center;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+  backdrop-filter: blur(3px);
 }
 
 .message img {
-  width: 100px;
-  height: auto;
-  margin-bottom: 10px;
+  width: 64px;
+  height: 64px;
+  object-fit: contain;
+  margin-right: 15px;
+  border-radius: 8px;
+  background: #fff;
 }
 
-/* 淡入動畫 */
-@keyframes fadeInUp {
-  from {
-    opacity: 0;
-    transform: translateY(20px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+.message h3 {
+  margin: 0;
+  font-size: 18px;
+  color: #ffe98a;
 }
 
-/* 搖晃動畫 */
-@keyframes shake {
-  0% { transform: translateX(0); }
-  25% { transform: translateX(-3px); }
-  50% { transform: translateX(3px); }
-  75% { transform: translateX(-2px); }
-  100% { transform: translateX(0); }
+.message p {
+  margin: 5px 0 0 0;
+  color: #f0f0f0;
+  font-size: 16px;
+}
+
+/* 音樂播放按鈕 */
+#musicToggle {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  background: rgba(255, 255, 255, 0.2);
+  color: #fff;
+  padding: 10px 14px;
+  border: none;
+  border-radius: 12px;
+  cursor: pointer;
+  font-size: 14px;
+  z-index: 999;
+  transition: background 0.3s ease;
+  backdrop-filter: blur(5px);
+}
+
+#musicToggle:hover {
+  background: rgba(255, 255, 255, 0.4);
+  color: #000;
 }
