@@ -1,5 +1,5 @@
 document.addEventListener('DOMContentLoaded', () => {
-  const form = document.querySelector('form');
+  const form = document.getElementById('commentForm');
   const app = document.getElementById('app');
   const messageCount = document.getElementById('messageCount');
   const audio = document.getElementById('bgm');
@@ -31,7 +31,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const specialKeyword = '小屁股蛋';
   const specialImage = 'special.png';
 
-  // 音樂控制
+  // 音樂控制按鈕
   muteButton.addEventListener('click', () => {
     if (audio.paused) {
       audio.play();
@@ -42,11 +42,15 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   });
 
+  // 嘗試自動播放音樂（會被瀏覽器擋）
   try {
-    audio.play();
-    muteButton.textContent = '靜音';
+    audio.play().then(() => {
+      muteButton.textContent = '靜音';
+    }).catch(() => {
+      muteButton.textContent = '播放音樂';
+    });
   } catch (e) {
-    console.warn("自動播放被阻擋，請手動播放音樂。");
+    console.warn("自動播放被阻擋，請手動點擊播放音樂");
   }
 
   let messages = JSON.parse(localStorage.getItem('messages')) || [];
@@ -89,23 +93,18 @@ document.addEventListener('DOMContentLoaded', () => {
     document.querySelectorAll('.message img').forEach(img => {
       img.addEventListener('click', () => {
         const index = parseInt(img.dataset.index);
-        const step = parseInt(img.dataset.step);
+        let step = parseInt(img.dataset.step);
         const msg = messages[index];
         const messageDiv = img.parentElement;
         const textP = messageDiv.querySelector('.text');
 
-        if (step === 0) {
-          textP.textContent = msg.text;
-          img.dataset.step = '1';
-        } else if (step === 1) {
+        step = (step + 1) % 3;
+        img.dataset.step = step;
+
+        if (step === 1) {
           textP.textContent = getRandomBlessing();
-          img.dataset.step = '2';
         } else {
-          img.src = msg.name.includes(specialKeyword)
-            ? images/${specialImage}
-            : `images/${characters[msg.character] || 'Luffy.png'}`;
           textP.textContent = msg.text;
-          img.dataset.step = '0';
         }
       });
     });
@@ -126,6 +125,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     if (!name) return;
 
+    // 特殊指令：清除留言
     if (name === '夏夕夏景') {
       localStorage.removeItem('messages');
       messages = [];
