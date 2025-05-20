@@ -3,20 +3,38 @@ document.addEventListener('DOMContentLoaded', () => {
   const app = document.getElementById('app');
   const messageCount = document.getElementById('messageCount');
   const audio = document.getElementById('bgMusic');
+  const musicToggle = document.getElementById('musicToggle');
 
-  // 播放背景音樂
+  // 音樂播放控制
+  musicToggle.addEventListener('click', () => {
+    if (audio.paused) {
+      audio.play();
+      musicToggle.textContent = '暫停音樂';
+    } else {
+      audio.pause();
+      musicToggle.textContent = '播放音樂';
+    }
+  });
+
+  // 預設播放音樂
   try {
-    audio.play().catch(e => {
-      console.warn("音樂播放失敗：", e);
-    });
+    audio.play();
+    musicToggle.textContent = '暫停音樂';
   } catch (e) {
-    console.warn("音樂錯誤：", e);
+    console.warn("自動播放被阻擋，請手動點擊播放。");
   }
 
+  // 對應角色與圖檔名稱（11 張圖）
   const characters = {
-    luffy: 'luffy.png',
-    nami: 'nami.png',
-    robin: 'robin.png'
+    luffy: 'Luffy.png',
+    zoro: 'Zoro.png',
+    sanji: 'Sanji.png',
+    nami: 'Nami.png',
+    robin: 'Robin.png',
+    chopper: 'Chopper.png',
+    hancock: 'Hancock.png',
+    beauty1: 'beauty1.png',
+    beauty2: 'beauty2.png'
   };
 
   const specialKeyword = '小屁股蛋';
@@ -31,12 +49,13 @@ document.addEventListener('DOMContentLoaded', () => {
       div.className = 'message';
 
       let imgSrc = '';
+
       if (msg.name.includes(specialKeyword)) {
         imgSrc = `images/${specialImage}`;
       } else if (characters[msg.character]) {
         imgSrc = `images/${characters[msg.character]}`;
       } else {
-        imgSrc = 'images/luffy.png';
+        imgSrc = 'images/Luffy.png'; // fallback 預設顯示魯夫
       }
 
       div.innerHTML = `
