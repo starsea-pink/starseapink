@@ -1,45 +1,47 @@
 <!DOCTYPE html>
 <html lang="zh-Hant">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>蒟蒻信的悶騷生日留言板</title>
-  <link rel="stylesheet" href="style.css" />
-  <link rel="icon" href="favicon.ico" type="image/x-icon">
+  <meta charset="UTF-8">
+  <title>蒟蒻信的悶騷留言板</title>
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <audio id="bgMusic" src="music/Endofworld.mp3" loop></audio>
-  <button id="musicToggle">播放/暫停音樂</button>
+  <button id="musicToggle">播放音樂</button>
+  <audio id="bgMusic" loop>
+    <source src="music.mp3" type="audio/mpeg">
+    您的瀏覽器不支援音樂播放。
+  </audio>
 
   <div class="container">
-    <h1>蒟蒻信的悶騷生日留言板</h1>
-    <div id="messageCount"></div>
-    <div id="app"></div>
+    <h1>蒟蒻信的悶騷留言板</h1>
+    <p id="messageCount"></p>
 
     <form id="messageForm">
-      <label for="name">你的悶騷代號（別害羞～）</label>
-      <input type="text" id="name" placeholder="蒟蒻神、火拳哥、牛奶控...都行啦">
+      <label for="name">你的暱稱：</label>
+      <input type="text" name="name" required>
 
-      <label for="message">悄悄話 or 噴火彈</label>
-      <textarea id="message" placeholder="寫下你最想對壽星說的話～也可以亂告白試試看！"></textarea>
+      <label for="message">留言內容：</label>
+      <textarea name="message" required></textarea>
 
-      <label for="character">派誰出場代表你？</label>
-      <select id="character">
+      <label for="character">選擇代表角色：</label>
+      <select name="character">
         <option value="luffy">魯夫</option>
         <option value="zoro">索隆</option>
+        <option value="sanji">香吉士</option>
         <option value="nami">娜美</option>
         <option value="robin">羅賓</option>
-        <option value="sanji">香吉士</option>
         <option value="chopper">喬巴</option>
-        <option value="hancock">女帝</option>
-        <option value="beauty1">爆乳1</option>
-        <option value="beauty2">爆乳2</option>
         <option value="usopp">騙人布</option>
         <option value="franky">佛朗基</option>
+        <option value="hancock">女帝</option>
+        <option value="beauty1">性感美女1</option>
+        <option value="beauty2">性感美女2</option>
       </select>
 
-      <button type="submit">投下悶騷炸彈！</button>
+      <button type="submit">送出留言</button>
     </form>
+
+    <div id="app"></div>
   </div>
 
   <script src="main.js"></script>

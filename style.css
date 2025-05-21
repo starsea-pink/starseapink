@@ -1,9 +1,8 @@
-/* 字體設定與背景 */
 body {
   margin: 0;
   padding: 0;
   font-family: "Noto Sans TC", "Microsoft JhengHei", sans-serif;
-  background-image: url("images/background.jpg");
+  background-image: url("images/background.png");
   background-size: cover;
   background-position: center;
   background-attachment: fixed;
@@ -11,7 +10,6 @@ body {
   line-height: 1.6;
 }
 
-/* 外層容器 */
 .container {
   max-width: 700px;
   margin: 50px auto;
@@ -21,7 +19,6 @@ body {
   box-shadow: 0 0 20px rgba(255, 255, 255, 0.1);
 }
 
-/* 標題樣式 */
 .container h1 {
   font-size: 28px;
   text-align: center;
@@ -30,7 +27,6 @@ body {
   color: #ffd369;
 }
 
-/* 留言統計數 */
 #messageCount {
   text-align: center;
   margin-bottom: 20px;
@@ -38,7 +34,6 @@ body {
   color: #eee;
 }
 
-/* 表單區塊 */
 form label {
   font-weight: bold;
   margin-top: 15px;
@@ -82,7 +77,6 @@ form button:hover {
   background: #ffa733;
 }
 
-/* 單則留言卡片 */
 .message {
   background: rgba(255, 255, 255, 0.15);
   padding: 16px;
@@ -115,7 +109,6 @@ form button:hover {
   font-size: 16px;
 }
 
-/* 音樂播放按鈕 */
 #musicToggle {
   position: fixed;
   top: 20px;

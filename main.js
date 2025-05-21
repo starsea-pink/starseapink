@@ -16,7 +16,8 @@ document.addEventListener('DOMContentLoaded', () => {
     beauty1: 'beauty1.png',
     beauty2: 'beauty2.png',
     usopp: 'Usopp.png',
-    franky: 'Franky.png'
+    franky: 'Franky.png',
+    special: 'special.png'
   };
 
   const blessings = [
@@ -59,9 +60,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const name = form.name.value.trim();
     const text = form.message.value.trim();
-    const character = form.character.value;
+    let character = form.character.value;
 
-    if (!name) return;
+    if (!name || !text) {
+      alert("請填寫名字與留言內容！");
+      return;
+    }
 
     if (name === "夏夕夏景") {
       localStorage.removeItem('messages');
@@ -71,9 +75,13 @@ document.addEventListener('DOMContentLoaded', () => {
       return;
     }
 
+    if (name === "小屁股蛋") {
+      character = 'special';
+    }
+
     const messageObj = {
       name,
-      text: text || blessings[Math.floor(Math.random() * blessings.length)],
+      text,
       character
     };
 
@@ -81,6 +89,9 @@ document.addEventListener('DOMContentLoaded', () => {
     localStorage.setItem('messages', JSON.stringify(messages));
     renderMessages();
     form.reset();
+
+    // 額外顯示隨機祝福
+    alert(blessings[Math.floor(Math.random() * blessings.length)]);
   });
 
   muteButton.addEventListener('click', () => {
@@ -94,4 +105,11 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   renderMessages();
+
+  // 自動播放音樂（部分瀏覽器需互動後播放）
+  window.addEventListener('click', () => {
+    if (audio.paused) {
+      audio.play().catch(() => {});
+    }
+  }, { once: true });
 });
