@@ -24,7 +24,8 @@
       <textarea name="message" required></textarea>
 
       <label for="character">選擇代表角色：</label>
-      <select name="character">
+      <select name="character" id="characterSelect" required>
+        <option value="">--請選擇角色--</option>
         <option value="luffy">魯夫</option>
         <option value="zoro">索隆</option>
         <option value="sanji">香吉士</option>
@@ -41,31 +42,116 @@
       <button type="submit">送出留言</button>
     </form>
 
+    <button id="loadMessages">載入該角色留言</button>
+
     <div id="app"></div>
   </div>
 
   <script>
     const bgMusic = document.getElementById('bgMusic');
     const musicToggle = document.getElementById('musicToggle');
+    let musicPlaying = false;
 
+    // 音樂播放控制
     musicToggle.addEventListener('click', () => {
-      if (bgMusic.paused) {
-        bgMusic.play();
-        musicToggle.textContent = '暫停音樂';
-      } else {
+      if (musicPlaying) {
         bgMusic.pause();
         musicToggle.textContent = '播放音樂';
+      } else {
+        bgMusic.play().then(() => {
+          musicToggle.textContent = '暫停音樂';
+        }).catch(() => {
+          alert("瀏覽器禁止自動播放，請手動點擊一次畫面後重試。");
+        });
       }
+      musicPlaying = !musicPlaying;
     });
 
-    // 自動播放（首次點擊頁面）
+    // 自動啟動音樂（第一次互動）
     window.addEventListener('click', () => {
-      if (bgMusic.paused) {
-        bgMusic.play().catch(() => {});
+      if (!musicPlaying) {
+        bgMusic.play().then(() => {
+          musicToggle.textContent = '暫停音樂';
+          musicPlaying = true;
+        }).catch(() => {});
       }
     }, { once: true });
-  </script>
 
-  <script src="main.js"></script>
+    // 留言儲存與顯示
+    const form = document.getElementById('messageForm');
+    const app = document.getElementById('app');
+    const count = document.getElementById('messageCount');
+    const characterSelect = document.getElementById('characterSelect');
+    const loadButton = document.getElementById('loadMessages');
+
+    const birthdayMessages = [
+      "生日快樂！願你每天都有海賊王的氣勢！",
+      "願你的每個夢想都像惡魔果實一樣強大！",
+      "今天你最大，連紅髮都要祝你平安！",
+      "祝你心想事成、冒險不止！",
+      "你是全海上最閃耀的星！生日快樂！"
+    ];
+
+    function getMessages(character) {
+      return JSON.parse(localStorage.getItem(`messages_${character}`) || '[]');
+    }
+
+    function saveMessage(character, msg) {
+      const messages = getMessages(character);
+      messages.unshift(msg);
+      localStorage.setItem(`messages_${character}`, JSON.stringify(messages));
+    }
+
+    function renderMessages(character) {
+      const messages = getMessages(character);
+      app.innerHTML = messages.map(m => `
+        <div class="message">
+          <strong>${m.name}</strong>：${m.message}
+          <br><em>${m.blessing}</em>
+        </div>
+      `).join('');
+      count.textContent = `目前共有 ${messages.length} 則留言`;
+    }
+
+    form.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const name = form.name.value.trim();
+      const message = form.message.value.trim();
+      const character = form.character.value;
+
+      if (!character) {
+        alert("請選擇角色！");
+        return;
+      }
+
+      // 檢查是否為「夏夕夏景」
+      if (name === "夏夕夏景") {
+        if (confirm("你輸入了清除密語，這將刪除所有留言，確定嗎？")) {
+          localStorage.clear();
+          app.innerHTML = '';
+          count.textContent = '';
+          alert("所有留言已清除！");
+        }
+        return;
+      }
+
+      const blessing = birthdayMessages[Math.floor(Math.random() * birthdayMessages.length)];
+
+      const msg = { name, message, blessing };
+      saveMessage(character, msg);
+      renderMessages(character);
+
+      form.reset();
+    });
+
+    loadButton.addEventListener('click', () => {
+      const selected = characterSelect.value;
+      if (!selected) {
+        alert("請先選擇一個角色");
+        return;
+      }
+      renderMessages(selected);
+    });
+  </script>
 </body>
 </html>
