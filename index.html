@@ -9,7 +9,7 @@
   <button id="musicToggle">播放音樂</button>
   <audio id="bgMusic" loop>
     <source src="music/Endofworld.mp3" type="audio/mpeg">
-    您的瀏覽器不支援音樂播放。
+    你的瀏覽器不支援音樂播放。
   </audio>
 
   <div class="container">
@@ -57,6 +57,13 @@
         musicToggle.textContent = '播放音樂';
       }
     });
+
+    // 自動播放（首次點擊頁面）
+    window.addEventListener('click', () => {
+      if (bgMusic.paused) {
+        bgMusic.play().catch(() => {});
+      }
+    }, { once: true });
   </script>
 
   <script src="main.js"></script>
