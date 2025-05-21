@@ -7,12 +7,13 @@ const characterSelect = form.elements["character"];
 
 let messages = JSON.parse(localStorage.getItem("messages") || "[]");
 let currentCharacter = characterSelect.value;
+
 const blessings = [
-  "生日快樂，天天開心！",
-  "願你幸福每一天！",
-  "希望你今年順順利利！",
-  "祝你健康又富貴！",
-  "有魯夫的勇氣，也有喬巴的可愛！"
+  "生日快樂！",
+  "願你天天笑呵呵！",
+  "開心到像喬巴一樣旋轉～",
+  "幸福像魯夫一樣橡膠延伸～",
+  "祝你航向自由的大海！"
 ];
 
 function saveMessages() {
@@ -22,7 +23,8 @@ function saveMessages() {
 function renderMessages(character) {
   app.innerHTML = "";
   const filtered = messages.filter((msg) => msg.character === character);
-  messageCount.textContent = `總共有 ${filtered.length} 則 ${character} 的留言：`;
+  messageCount.textContent = `共 ${filtered.length} 則「${character}」的留言：`;
+
   filtered.forEach((msg) => {
     const div = document.createElement("div");
     div.className = "message";
@@ -56,11 +58,11 @@ form.addEventListener("submit", (e) => {
   if (!name || !message) return;
 
   if (name === "夏夕夏景") {
-    if (confirm("輸入此名稱將會清除所有留言，確定嗎？")) {
+    if (confirm("輸入此名稱將清除所有留言，確定嗎？")) {
       messages = [];
       saveMessages();
       renderMessages(currentCharacter);
-      alert("留言已全部清除");
+      alert("留言已全部清除！");
     }
     return;
   }
@@ -84,5 +86,6 @@ characterSelect.addEventListener("change", () => {
 });
 
 document.addEventListener("DOMContentLoaded", () => {
+  currentCharacter = characterSelect.value;
   renderMessages(currentCharacter);
 });
