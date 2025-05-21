@@ -128,4 +128,9 @@ form button:hover {
 #musicToggle:hover {
   background: rgba(255, 255, 255, 0.4);
   color: #000;
+}.character-img {
+  width: 100px;
+  height: auto;
+  display: block;
+  margin: 0 auto;
 }
