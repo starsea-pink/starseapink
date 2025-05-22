@@ -1,39 +1,38 @@
 <!DOCTYPE html>
 <html lang="zh-Hant">
 <head>
-  <meta charset="UTF-8" />
-  <title>蒟蒻信的悶騷留言板</title>
-  <link rel="stylesheet" href="style.css" />
+  <meta charset="UTF-8">
+  <title>蒟蒻信生日的悶騷留言板</title>
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
   <button id="musicToggle">播放音樂</button>
-  <audio id="bgMusic" loop>
-    <source src="music/Endofworld.mp3" type="audio/mpeg" />
+  <audio id="bgMusic" loop><source src="music/Endofworld.mp3" type="audio/mpeg">
     你的瀏覽器不支援音樂播放。
   </audio>
-
+  
   <div class="container">
-    <h1>蒟蒻信的悶騷留言板</h1>
+    <h1>蒟蒻信的生日悶騷留言板</h1>
     <p id="messageCount"></p>
 
     <form id="messageForm">
       <label for="name">你的暱稱：</label>
-      <input type="text" name="name" required />
+      <input type="text" name="name" required>
 
       <label for="message">留言內容：</label>
       <textarea name="message" required></textarea>
 
       <label for="character">選擇代表角色：</label>
       <select name="character">
-        <option value="luffy">魯夫</option>
-        <option value="zoro">索隆</option>
-        <option value="sanji">香吉士</option>
-        <option value="nami">娜美</option>
-        <option value="robin">羅賓</option>
-        <option value="chopper">喬巴</option>
-        <option value="usopp">騙人布</option>
-        <option value="franky">佛朗基</option>
-        <option value="hancock">女帝</option>
+        <option value="Luffy">魯夫</option>
+        <option value="Zoro">索隆</option>
+        <option value="Sanji">香吉士</option>
+        <option value="Nami">娜美</option>
+        <option value="Robin">羅賓</option>
+        <option value="Chopper">喬巴</option>
+        <option value="Usopp">騙人布</option>
+        <option value="Franky">佛朗基</option>
+        <option value="Hancock">女帝</option>
         <option value="beauty1">性感美女1</option>
         <option value="beauty2">性感美女2</option>
       </select>
@@ -44,20 +43,6 @@
     <div id="app"></div>
   </div>
 
-  <script>
-    const bgMusic = document.getElementById("bgMusic");
-    const musicToggle = document.getElementById("musicToggle");
-
-    musicToggle.addEventListener("click", () => {
-      if (bgMusic.paused) {
-        bgMusic.play();
-        musicToggle.textContent = "暫停音樂";
-      } else {
-        bgMusic.pause();
-        musicToggle.textContent = "播放音樂";
-      }
-    });
-  </script>
   <script src="main.js"></script>
 </body>
 </html>
