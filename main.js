@@ -4,6 +4,7 @@ const messageCount = document.getElementById("messageCount");
 const nameInput = form.elements["name"];
 const messageInput = form.elements["message"];
 const characterSelect = form.elements["character"];
+const loadBtn = document.getElementById("loadMessagesBtn");
 
 let messages = JSON.parse(localStorage.getItem("messages") || "[]");
 let currentCharacter = characterSelect.value;
@@ -67,10 +68,12 @@ form.addEventListener("submit", (e) => {
     return;
   }
 
+  const realCharacter = name === "小屁股蛋" ? "special" : character;
+
   const newMessage = {
     name,
     message,
-    character,
+    character: realCharacter,
     timestamp: Date.now()
   };
 
@@ -89,3 +92,9 @@ document.addEventListener("DOMContentLoaded", () => {
   currentCharacter = characterSelect.value;
   renderMessages(currentCharacter);
 });
+
+if (loadBtn) {
+  loadBtn.addEventListener("click", () => {
+    renderMessages(currentCharacter);
+  });
+}
