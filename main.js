@@ -1,100 +1,79 @@
-const form = document.getElementById("messageForm");
-const app = document.getElementById("app");
-const messageCount = document.getElementById("messageCount");
-const nameInput = form.elements["name"];
-const messageInput = form.elements["message"];
-const characterSelect = form.elements["character"];
-const loadBtn = document.getElementById("loadMessagesBtn");
-
-let messages = JSON.parse(localStorage.getItem("messages") || "[]");
-let currentCharacter = characterSelect.value;
-
+const bgMusic = document.getElementById('bgMusic');
+const musicToggle = document.getElementById('musicToggle');
+const reloadButton = document.getElementById('reloadButton');
+const form = document.getElementById('messageForm');
+const app = document.getElementById('app');
+const messageCount = document.getElementById('messageCount');
 const blessings = [
-  "生日快樂！",
-  "願你天天笑呵呵！",
-  "開心到像喬巴一樣旋轉～",
-  "幸福像魯夫一樣橡膠延伸～",
-  "祝你航向自由的大海！"
+  '祝你天天開心！', '生日快樂！', '願你心想事成～',
+  '幸福滿滿每一天！', '笑口常開唷！', '願你萬事如意！'
 ];
 
-function saveMessages() {
-  localStorage.setItem("messages", JSON.stringify(messages));
-}
+let messages = JSON.parse(localStorage.getItem('messages')) || [];
 
-function renderMessages(character) {
-  app.innerHTML = "";
-  const filtered = messages.filter((msg) => msg.character === character);
-  messageCount.textContent = `共 ${filtered.length} 則「${character}」的留言：`;
+function renderMessages(characterFilter = null) {
+  app.innerHTML = '';
+  let filtered = messages;
 
-  filtered.forEach((msg) => {
-    const div = document.createElement("div");
-    div.className = "message";
+  if (characterFilter) {
+    filtered = messages.filter(m => m.character === characterFilter);
+  }
 
-    const img = document.createElement("img");
-    img.src = `images/${msg.character}.png`;
-    img.alt = msg.character;
-    img.className = "character-img";
-    div.appendChild(img);
-
-    const content = document.createElement("p");
-    content.innerHTML = `<strong>${msg.name}</strong>：${msg.message}`;
-    div.appendChild(content);
-
-    const blessing = document.createElement("div");
-    blessing.className = "blessing";
-    blessing.textContent = blessings[Math.floor(Math.random() * blessings.length)];
-    div.appendChild(blessing);
-
+  filtered.forEach(msg => {
+    const div = document.createElement('div');
+    div.className = 'message';
+    div.innerHTML = `<strong>${msg.name} (${msg.character})：</strong>
+                     <p>${msg.message}</p>
+                     <em>${msg.blessing}</em>`;
     app.appendChild(div);
   });
+
+  messageCount.textContent = `目前共有 ${filtered.length} 則留言`;
 }
 
-form.addEventListener("submit", (e) => {
+musicToggle.addEventListener('click', () => {
+  if (bgMusic.paused) {
+    bgMusic.play();
+    musicToggle.textContent = '暫停音樂';
+  } else {
+    bgMusic.pause();
+    musicToggle.textContent = '播放音樂';
+  }
+});
+
+reloadButton.addEventListener('click', () => {
+  renderMessages();
+});
+
+form.addEventListener('submit', e => {
   e.preventDefault();
 
-  const name = nameInput.value.trim();
-  const message = messageInput.value.trim();
-  const character = characterSelect.value;
+  const name = form.name.value.trim();
+  const message = form.message.value.trim();
+  let character = form.character.value;
 
-  if (!name || !message) return;
-
-  if (name === "夏夕夏景") {
-    if (confirm("輸入此名稱將清除所有留言，確定嗎？")) {
+  if (name === '夏夕夏景') {
+    if (confirm('你確定要清除所有留言嗎？')) {
       messages = [];
-      saveMessages();
-      renderMessages(currentCharacter);
-      alert("留言已全部清除！");
+      localStorage.removeItem('messages');
+      renderMessages();
     }
     return;
   }
 
-  const realCharacter = name === "小屁股蛋" ? "special" : character;
+  if (name === '小屁股蛋') {
+    character = 'special';
+  }
 
-  const newMessage = {
+  const newMsg = {
     name,
     message,
-    character: realCharacter,
-    timestamp: Date.now()
+    character,
+    blessing: blessings[Math.floor(Math.random() * blessings.length)]
   };
 
-  messages.push(newMessage);
-  saveMessages();
-  renderMessages(currentCharacter);
+  messages.push(newMsg);
+  localStorage.setItem('messages', JSON.stringify(messages));
   form.reset();
+  renderMessages(character);
 });
-
-characterSelect.addEventListener("change", () => {
-  currentCharacter = characterSelect.value;
-  renderMessages(currentCharacter);
-});
-
-document.addEventListener("DOMContentLoaded", () => {
-  currentCharacter = characterSelect.value;
-  renderMessages(currentCharacter);
-});
-
-if (loadBtn) {
-  loadBtn.addEventListener("click", () => {
-    renderMessages(currentCharacter);
-  });
-}
