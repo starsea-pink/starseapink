@@ -1,116 +1,117 @@
-const form = document.getElementById("messageForm");
-const board = document.getElementById("app");  // 修正這裡
-const bgMusic = document.getElementById("bgMusic");
-const musicToggle = document.getElementById("musicToggle");
+document.addEventListener("DOMContentLoaded", function () {
+  const form = document.getElementById("messageForm");
+  const app = document.getElementById("app");
+  const messageCount = document.getElementById("messageCount");
+  const characterSelect = form.elements["character"];
 
-const blessings = [
-  "祝你今天比昨天快樂，明天比今天幸福！",
-  "生日快樂！願你的笑容永遠燦爛！",
-  "希望你的一年充滿驚喜與喜悅！",
-  "生日就是要大吃大喝大開心！"
-];
+  let messages = [];
+  let originalCharacter = "";
 
-musicToggle.addEventListener("click", () => {
-  if (bgMusic.paused) {
-    bgMusic.play();
-    musicToggle.textContent = "暫停音樂";
-  } else {
-    bgMusic.pause();
-    musicToggle.textContent = "播放音樂";
-  }
-});
+  // 初始歡迎詞
+  const welcome = document.createElement("p");
+  welcome.textContent = "歡迎大家一起來祝福Eric生日！";
+  app.appendChild(welcome);
 
-function saveMessages(messages) {
-  localStorage.setItem("savedMessages", JSON.stringify(messages));
-}
+  // 角色圖片切換用
+  const getCharacterImage = (character) => `images/${character}.png`;
 
-function loadMessages() {
-  return JSON.parse(localStorage.getItem("savedMessages") || "[]");
-}
+  // 隨機祝福語
+  const blessings = [
+    "生日快樂！願你天天開心！",
+    "祝你今年順心如意！",
+    "願你的遊戲之路更加順暢！",
+    "吃飽睡好打電動～最棒生日！",
+  ];
 
-function renderMessages() {
-  board.innerHTML = "";
-  const messages = loadMessages();
-  messages.forEach(({ name, message, character }) => {
-    const msgDiv = document.createElement("div");
-    msgDiv.className = "message";
+  // 渲染留言
+  function renderMessages() {
+    app.innerHTML = ""; // 清空
+    app.appendChild(welcome); // 加回歡迎詞
+    messages.forEach((msg, index) => {
+      const div = document.createElement("div");
+      div.className = "message";
+      const img = document.createElement("img");
+      img.src = getCharacterImage(msg.character);
+      img.alt = msg.character;
+      img.width = 100;
 
-    const img = document.createElement("img");
-    img.src = `images/${character}.png`;
-    img.alt = character;
-    img.className = "character";
+      const name = document.createElement("h3");
+      name.textContent = msg.name;
 
-    const nameP = document.createElement("p");
-    nameP.textContent = name;
+      const message = document.createElement("p");
+      message.textContent = msg.message;
 
-    const messageP = document.createElement("p");
-    messageP.textContent = message;
-    messageP.className = "hidden";
+      const blessing = document.createElement("p");
+      blessing.className = "blessing";
+      blessing.textContent = msg.blessing;
 
-    const blessingP = document.createElement("p");
-    blessingP.textContent = "";
-    blessingP.className = "hidden";
-
-    msgDiv.appendChild(img);
-    msgDiv.appendChild(nameP);
-    msgDiv.appendChild(messageP);
-    msgDiv.appendChild(blessingP);
-
-    const originalSrc = img.src;
-    let clickStep = 0;
-
-    msgDiv.addEventListener("click", () => {
-      clickStep = (clickStep + 1) % 4;
-      if (clickStep === 1) {
-        // 顯示留言內容
-        messageP.classList.remove("hidden");
-      } else if (clickStep === 2) {
-        // 顯示祝福
-        blessingP.textContent = blessings[Math.floor(Math.random() * blessings.length)];
-        blessingP.classList.remove("hidden");
-      } else if (clickStep === 3) {
-        // 重置
-        messageP.classList.add("hidden");
-        blessingP.classList.add("hidden");
-        blessingP.textContent = "";
-        clickStep = 0;
-      }
+      div.appendChild(img);
+      div.appendChild(name);
+      div.appendChild(message);
+      div.appendChild(blessing);
+      app.appendChild(div);
     });
 
-    board.appendChild(msgDiv);
-  });
-}
+    messageCount.textContent = `目前共 ${messages.length} 則留言`;
+  }
 
-form.addEventListener("submit", (e) => {
-  e.preventDefault();
-  const name = form.name.value.trim();
-  let message = form.message.value.trim();
-  let character = form.character.value;
+  // 表單送出
+  form.addEventListener("submit", function (e) {
+    e.preventDefault();
 
-  if (name === "" || message === "") return;
+    let name = form.elements["name"].value.trim();
+    let message = form.elements["message"].value.trim();
+    let character = characterSelect.value;
 
-  if (message.includes("夏夕夏景")) {
-    if (confirm("你輸入的是關鍵詞，將清除所有留言，確定嗎？")) {
-      localStorage.removeItem("savedMessages");
-      renderMessages();
-      return;
-    } else {
+    // 特殊代碼：清除留言
+    if (message === "夏夕夏景") {
+      if (confirm("你將清除所有留言，確定嗎？")) {
+        messages = [];
+        renderMessages();
+      }
       return;
     }
-  }
 
-  if (message.includes("小屁股蛋")) {
-    character = "special";
-  }
+    // 特殊代碼：切換特殊角色
+    if (message === "小屁股蛋") {
+      character = "special";
+    }
 
-  const messages = loadMessages();
-  messages.push({ name, message, character });
-  saveMessages(messages);
-  renderMessages();
+    originalCharacter = character;
 
-  form.reset();
-});
+    messages.push({
+      name,
+      message,
+      character,
+      blessing: "", // 初始不顯示祝福
+    });
 
-window.addEventListener("DOMContentLoaded", () => {
-  renderMessages();
+    renderMessages();
+    form.reset();
+    characterSelect.value = originalCharacter;
+  });
+
+  // 點擊留言切換內容
+  app.addEventListener("click", function (e) {
+    const target = e.target.closest(".message");
+    if (!target) return;
+
+    const index = Array.from(app.children).indexOf(target) - 1; // 減掉歡迎詞
+    if (index < 0 || index >= messages.length) return;
+
+    const msg = messages[index];
+
+    // 切換狀態
+    if (!msg._state || msg._state === "character") {
+      msg._state = "message";
+    } else if (msg._state === "message") {
+      msg._state = "blessing";
+      msg.blessing = blessings[Math.floor(Math.random() * blessings.length)];
+    } else if (msg._state === "blessing") {
+      msg._state = "character";
+      msg.blessing = "";
+    }
+
+    renderMessages();
+  });
 });
