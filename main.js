@@ -1,5 +1,5 @@
 const form = document.getElementById("messageForm");
-const board = document.getElementById("messageBoard");
+const board = document.getElementById("app");  // 修正這裡
 const bgMusic = document.getElementById("bgMusic");
 const musicToggle = document.getElementById("musicToggle");
 
@@ -9,8 +9,6 @@ const blessings = [
   "希望你的一年充滿驚喜與喜悅！",
   "生日就是要大吃大喝大開心！"
 ];
-
-let currentClick = 0;
 
 musicToggle.addEventListener("click", () => {
   if (bgMusic.paused) {
@@ -41,38 +39,41 @@ function renderMessages() {
     img.src = `images/${character}.png`;
     img.alt = character;
     img.className = "character";
-    msgDiv.appendChild(img);
 
     const nameP = document.createElement("p");
     nameP.textContent = name;
-    msgDiv.appendChild(nameP);
 
     const messageP = document.createElement("p");
-    messageP.textContent = "";
+    messageP.textContent = message;
     messageP.className = "hidden";
-    msgDiv.appendChild(messageP);
 
     const blessingP = document.createElement("p");
     blessingP.textContent = "";
     blessingP.className = "hidden";
+
+    msgDiv.appendChild(img);
+    msgDiv.appendChild(nameP);
+    msgDiv.appendChild(messageP);
     msgDiv.appendChild(blessingP);
 
-    let originalCharacter = character;
+    const originalSrc = img.src;
+    let clickStep = 0;
 
     msgDiv.addEventListener("click", () => {
-      currentClick = (currentClick + 1) % 4;
-
-      if (currentClick === 1) {
-        messageP.textContent = message;
+      clickStep = (clickStep + 1) % 4;
+      if (clickStep === 1) {
+        // 顯示留言內容
         messageP.classList.remove("hidden");
-      } else if (currentClick === 2) {
+      } else if (clickStep === 2) {
+        // 顯示祝福
         blessingP.textContent = blessings[Math.floor(Math.random() * blessings.length)];
         blessingP.classList.remove("hidden");
-      } else if (currentClick === 3) {
-        img.src = `images/${originalCharacter}.png`;
+      } else if (clickStep === 3) {
+        // 重置
         messageP.classList.add("hidden");
         blessingP.classList.add("hidden");
-        currentClick = 0;
+        blessingP.textContent = "";
+        clickStep = 0;
       }
     });
 
