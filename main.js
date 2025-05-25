@@ -1,4 +1,4 @@
-onst form = document.getElementById("messageForm");
+const form = document.getElementById("messageForm");
 const app = document.getElementById("app");
 const messageCount = document.getElementById("messageCount");
 
