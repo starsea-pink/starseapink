@@ -37,6 +37,8 @@ messageForm.addEventListener('submit', (e) => {
   if (name === '夏夕夏景') {
     messages = [];
     alert('輸入關鍵字成功，已清除所有留言');
+    currentCharacter = '';
+    displayStep = 0;
     renderMessages();
     return;
   }
@@ -46,7 +48,6 @@ messageForm.addEventListener('submit', (e) => {
   }
 
   messages.push({ name, content, character });
-  messageForm.reset();
   currentCharacter = character;
   displayStep = 0;
   renderMessages();
@@ -54,7 +55,6 @@ messageForm.addEventListener('submit', (e) => {
 
 app.addEventListener('click', () => {
   if (!currentCharacter) return;
-
   displayStep = (displayStep + 1) % 4;
   renderMessages();
 });
@@ -62,22 +62,21 @@ app.addEventListener('click', () => {
 function renderMessages() {
   app.innerHTML = '';
 
+  if (!currentCharacter) return;
+
   const currentMessages = messages.filter(msg => msg.character === currentCharacter || displayStep === 3);
 
   currentMessages.forEach(msg => {
     const div = document.createElement('div');
-    let imagePath = `images/${msg.character}.png`;
-
     let content = '';
-    if (displayStep === 0) {
-      content = `<img src="${imagePath}" alt="${msg.character}">`;
+
+    if (displayStep === 0 || displayStep === 3) {
+      content = `<img src="images/${msg.character}.png" alt="${msg.character}" style="max-width: 300px;">`;
     } else if (displayStep === 1) {
-      content = `<p>${msg.name}：${msg.content}</p>`;
+      content = `<p><strong>${msg.name}：</strong>${msg.content}</p>`;
     } else if (displayStep === 2) {
       const blessing = blessings[Math.floor(Math.random() * blessings.length)];
-      content = `<p>${msg.name}：${msg.content}</p><p>${blessing}</p>`;
-    } else {
-      content = `<img src="images/${currentCharacter}.png" alt="${currentCharacter}">`;
+      content = `<p><strong>${msg.name}：</strong>${msg.content}</p><p>${blessing}</p>`;
     }
 
     div.innerHTML = content;
