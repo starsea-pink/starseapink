@@ -17,7 +17,6 @@ const blessings = [
 
 // 角色圖片對應
 const characterImages = {
-  background: "images/background.png",
   beauty1: "images/beauty1.png",
   beauty2: "images/beauty2.png",
   Chopper: "images/chopper.png",
