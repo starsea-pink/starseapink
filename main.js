@@ -1,38 +1,23 @@
-const form = document.getElementById("messageForm");
-const app = document.getElementById("app");
-const messageCount = document.getElementById("messageCount");
+const bgMusic = document.getElementById('bgMusic');
+const musicToggle = document.getElementById('musicToggle');
+musicToggle.addEventListener('click', () => {
+  if (bgMusic.paused) {
+    bgMusic.play();
+    musicToggle.textContent = '暫停音樂';
+  } else {
+    bgMusic.pause();
+    musicToggle.textContent = '播放音樂';
+  }
+});
+
+const form = document.getElementById('messageForm');
+const app = document.getElementById('app');
+const characterSelect = document.getElementById('characterSelect');
 
 let messages = [];
-let displayIndex = 0;
-let originalCharacter = "";
-let currentDisplay = 0;
+let showState = 0;
 
-const blessings = [
-  "生日快樂！天天開心！",
-  "願你遊戲場場MVP！",
-  "釣蝦爆桶！心想事成！",
-  "生活多汁又鮮甜！",
-  "永遠保持帥氣又宅宅！"
-];
-
-// 角色圖片對應
-const characterImages = {
-  beauty1: "images/beauty1.png",
-  beauty2: "images/beauty2.png",
-  Chopper: "images/chopper.png",
-  Hancock: "images/hancock.png",
-  Luffy: "images/luffy.png",
-  Nami: "images/nami.png",
-  Robin: "images/robin.png",
-  Sanji: "images/sanji.png",
-  special: "images/special.png",
-  Zoro: "images/zoro.png",
-  Usopp: "images/usopp.png",
-  Franky: "images/franky.png"
-};
-
-// 儲存留言
-form.addEventListener("submit", function (e) {
+form.addEventListener('submit', (e) => {
   e.preventDefault();
 
   const name = form.name.value.trim();
@@ -41,73 +26,75 @@ form.addEventListener("submit", function (e) {
 
   if (!name || !message) return;
 
-  if (message === "夏夕夏景") {
-    alert("輸入了關鍵字，將清除所有留言！");
-    messages = [];
-    updateMessageCount();
-    app.innerHTML = "";
+  // 特殊角色判斷
+  if (name === '夏夕夏景') {
+    if (confirm("輸入夏夕夏景會清除所有留言內容，確定要繼續？")) {
+      messages = [];
+      renderMessages();
+    }
     return;
+  } else if (name === '小屁股蛋') {
+    character = 'special';
   }
 
-  if (message === "小屁股蛋") {
-    character = "special";
-  }
-
-  messages.push({ name, message, character });
-  updateMessageCount();
-
-  // 重設畫面
-  displayIndex = messages.length - 1;
-  originalCharacter = messages[displayIndex].character;
-  currentDisplay = 0;
-  renderDisplay();
+  messages.push({
+    name,
+    message,
+    character,
+    blessing: getRandomBlessing(),
+  });
 
   form.reset();
+  renderMessages();
 });
 
-// 更新留言數
-function updateMessageCount() {
-  messageCount.textContent = `目前共有 ${messages.length} 則留言`;
+function getRandomBlessing() {
+  const blessings = [
+    '祝你天天開心！',
+    '生日快樂，一切順利！',
+    '願你心想事成！',
+    '蒟蒻信也偷偷祝福你～',
+  ];
+  return blessings[Math.floor(Math.random() * blessings.length)];
 }
 
-// 渲染顯示階段
-function renderDisplay() {
-  if (displayIndex < 0 || displayIndex >= messages.length) return;
+function renderMessages() {
+  app.innerHTML = '';
+  messages.forEach((msg, index) => {
+    const block = document.createElement('div');
+    block.className = 'message-block';
+    block.dataset.index = index;
+    block.dataset.state = 0;
 
-  const { name, message, character } = messages[displayIndex];
+    const img = document.createElement('img');
+    img.src = `images/${msg.character}.png`;
+    img.alt = msg.character;
+    img.className = 'character-img';
+    block.appendChild(img);
 
-  let content = "";
-  let image = "";
+    app.appendChild(block);
 
-  switch (currentDisplay) {
-    case 0: // 顯示角色圖
-      image = characterImages[character] || characterImages["background"];
-      content = `<p>${name} 出現了！</p>`;
-      break;
-    case 1: // 顯示留言
-      image = characterImages[character];
-      content = `<p>${name} 說：${message}</p>`;
-      break;
-    case 2: // 顯示祝福語
-      image = characterImages[character];
-      const randomBless = blessings[Math.floor(Math.random() * blessings.length)];
-      content = `<p>${randomBless}</p>`;
-      break;
-    case 3: // 顯示原角色
-      image = characterImages[originalCharacter];
-      content = `<p>切回原角色</p>`;
-      break;
-  }
+    block.addEventListener('click', () => {
+      let currentState = parseInt(block.dataset.state);
+      block.innerHTML = '';
 
-  app.innerHTML = `
-    <div class="message-card">
-      <img src="${image}" alt="${character}" class="character-img">
-      ${content}
-    </div>
-  `;
+      if (currentState === 0) {
+        const p = document.createElement('p');
+        p.textContent = `${msg.name}：${msg.message}`;
+        block.appendChild(p);
+      } else if (currentState === 1) {
+        const p = document.createElement('p');
+        p.textContent = msg.blessing;
+        block.appendChild(p);
+      } else if (currentState === 2) {
+        const img = document.createElement('img');
+        img.src = `images/${msg.character}.png`;
+        img.alt = msg.character;
+        img.className = 'character-img';
+        block.appendChild(img);
+      }
 
-  currentDisplay = (currentDisplay + 1) % 4;
+      block.dataset.state = (currentState + 1) % 3;
+    });
+  });
 }
-
-// 點擊畫面切換階段
-app.addEventListener("click", renderDisplay);
