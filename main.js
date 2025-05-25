@@ -1,96 +1,114 @@
-const messageForm = document.getElementById('messageForm');
-const app = document.getElementById('app');
-const messageCount = document.getElementById('messageCount');
-const messages = [];
-let currentCharacter = null;
-let currentMessageIndex = 0;
+onst form = document.getElementById("messageForm");
+const app = document.getElementById("app");
+const messageCount = document.getElementById("messageCount");
 
-function createMessageElement(message) {
-  const container = document.createElement('div');
-  container.className = 'message';
+let messages = [];
+let displayIndex = 0;
+let originalCharacter = "";
+let currentDisplay = 0;
 
-  const characterImg = document.createElement('img');
-  characterImg.src = `images/${message.character}.png`;
-  characterImg.className = 'character-img';
+const blessings = [
+  "生日快樂！天天開心！",
+  "願你遊戲場場MVP！",
+  "釣蝦爆桶！心想事成！",
+  "生活多汁又鮮甜！",
+  "永遠保持帥氣又宅宅！"
+];
 
-  const messageText = document.createElement('p');
-  messageText.innerText = `${message.name}：${message.text}`;
+// 角色圖片對應
+const characterImages = {
+  background: "images/background.png",
+  beauty1: "images/beauty1.png",
+  beauty2: "images/beauty2.png",
+  Chopper: "images/chopper.png",
+  Hancock: "images/hancock.png",
+  Luffy: "images/luffy.png",
+  Nami: "images/nami.png",
+  Robin: "images/robin.png",
+  Sanji: "images/sanji.png",
+  special: "images/special.png",
+  Zoro: "images/zoro.png",
+  Usopp: "images/usopp.png",
+  Franky: "images/franky.png"
+};
 
-  const blessing = document.createElement('p');
-  blessing.innerText = getRandomBlessing();
-  blessing.className = 'blessing';
-
-  container.appendChild(characterImg);
-  container.appendChild(messageText);
-  container.appendChild(blessing);
-
-  return container;
-}
-
-function getRandomBlessing() {
-  const blessings = [
-    '生日快樂！永遠年輕快樂！',
-    '希望你天天開心，事事順心！',
-    '願你笑口常開，壽比南山！',
-    '祝你人生如遊戲般順利通關！',
-    '願你事業愛情雙豐收！',
-    '生日來點甜，年年都有戀！'
-  ];
-  const index = Math.floor(Math.random() * blessings.length);
-  return blessings[index];
-}
-
-function renderMessages() {
-  app.innerHTML = `<p class="intro">歡迎大家來祝福Eric生日，不管是悄悄話還是大聲公</p>`;
-  messages.forEach((msg, idx) => {
-    const el = createMessageElement(msg);
-    el.dataset.index = idx;
-    el.addEventListener('click', () => {
-      if (!el.dataset.step || el.dataset.step === '0') {
-        el.querySelector('p').style.display = 'none';
-        el.querySelector('.blessing').style.display = 'none';
-        el.dataset.step = '1';
-      } else if (el.dataset.step === '1') {
-        el.querySelector('p').style.display = 'block';
-        el.dataset.step = '2';
-      } else if (el.dataset.step === '2') {
-        el.querySelector('.blessing').style.display = 'block';
-        el.dataset.step = '3';
-      } else {
-        el.querySelector('p').style.display = 'block';
-        el.querySelector('.blessing').style.display = 'none';
-        el.dataset.step = '0';
-      }
-    });
-    app.appendChild(el);
-  });
-
-  messageCount.innerText = `目前留言總數：${messages.length}`;
-}
-
-messageForm.addEventListener('submit', (e) => {
+// 儲存留言
+form.addEventListener("submit", function (e) {
   e.preventDefault();
 
-  const name = messageForm.name.value.trim();
-  const text = messageForm.message.value.trim();
-  let character = messageForm.character.value;
+  const name = form.name.value.trim();
+  const message = form.message.value.trim();
+  let character = form.character.value;
 
-  if (!name || !text) return;
+  if (!name || !message) return;
 
-  // 特殊處理：輸入「夏夕夏景」提醒清除留言
-  if (text === '夏夕夏景') {
-    alert('你輸入了「夏夕夏景」，這會清除所有留言內容。確定的話請手動清除記錄。');
+  if (message === "夏夕夏景") {
+    alert("輸入了關鍵字，將清除所有留言！");
+    messages = [];
+    updateMessageCount();
+    app.innerHTML = "";
     return;
   }
 
-  // 特殊處理：輸入「小屁股蛋」指定使用 special 角色
-  if (text.includes('小屁股蛋')) {
-    character = 'special';
+  if (message === "小屁股蛋") {
+    character = "special";
   }
 
-  const newMessage = { name, text, character };
-  messages.push(newMessage);
+  messages.push({ name, message, character });
+  updateMessageCount();
 
-  messageForm.reset();
-  renderMessages();
+  // 重設畫面
+  displayIndex = messages.length - 1;
+  originalCharacter = messages[displayIndex].character;
+  currentDisplay = 0;
+  renderDisplay();
+
+  form.reset();
 });
+
+// 更新留言數
+function updateMessageCount() {
+  messageCount.textContent = `目前共有 ${messages.length} 則留言`;
+}
+
+// 渲染顯示階段
+function renderDisplay() {
+  if (displayIndex < 0 || displayIndex >= messages.length) return;
+
+  const { name, message, character } = messages[displayIndex];
+
+  let content = "";
+  let image = "";
+
+  switch (currentDisplay) {
+    case 0: // 顯示角色圖
+      image = characterImages[character] || characterImages["background"];
+      content = `<p>${name} 出現了！</p>`;
+      break;
+    case 1: // 顯示留言
+      image = characterImages[character];
+      content = `<p>${name} 說：${message}</p>`;
+      break;
+    case 2: // 顯示祝福語
+      image = characterImages[character];
+      const randomBless = blessings[Math.floor(Math.random() * blessings.length)];
+      content = `<p>${randomBless}</p>`;
+      break;
+    case 3: // 顯示原角色
+      image = characterImages[originalCharacter];
+      content = `<p>切回原角色</p>`;
+      break;
+  }
+
+  app.innerHTML = `
+    <div class="message-card">
+      <img src="${image}" alt="${character}" class="character-img">
+      ${content}
+    </div>
+  `;
+
+  currentDisplay = (currentDisplay + 1) % 4;
+}
+
+// 點擊畫面切換階段
+app.addEventListener("click", renderDisplay);
