@@ -1,5 +1,20 @@
 const bgMusic = document.getElementById('bgMusic');
 const musicToggle = document.getElementById('musicToggle');
+const messageForm = document.getElementById('messageForm');
+const app = document.getElementById('app');
+
+let messages = [];
+let displayStep = 0;
+let currentCharacter = '';
+
+const blessings = [
+  "願你天天開心！",
+  "祝你身體健康！",
+  "希望你心想事成！",
+  "蒟蒻信也偷偷祝福你～",
+  "每天都被幸福包圍！"
+];
+
 musicToggle.addEventListener('click', () => {
   if (bgMusic.paused) {
     bgMusic.play();
@@ -10,91 +25,62 @@ musicToggle.addEventListener('click', () => {
   }
 });
 
-const form = document.getElementById('messageForm');
-const app = document.getElementById('app');
-const characterSelect = document.getElementById('characterSelect');
-
-let messages = [];
-let showState = 0;
-
-form.addEventListener('submit', (e) => {
+messageForm.addEventListener('submit', (e) => {
   e.preventDefault();
 
-  const name = form.name.value.trim();
-  const message = form.message.value.trim();
-  let character = form.character.value;
+  const name = messageForm.name.value.trim();
+  const content = messageForm.message.value.trim();
+  let character = messageForm.character.value;
 
-  if (!name || !message) return;
+  if (!name || !content) return;
 
-  // 特殊角色判斷
   if (name === '夏夕夏景') {
-    if (confirm("輸入夏夕夏景會清除所有留言內容，確定要繼續？")) {
-      messages = [];
-      renderMessages();
-    }
+    messages = [];
+    alert('輸入關鍵字成功，已清除所有留言');
+    renderMessages();
     return;
-  } else if (name === '小屁股蛋') {
+  }
+
+  if (name === '小屁股蛋') {
     character = 'special';
   }
 
-  messages.push({
-    name,
-    message,
-    character,
-    blessing: getRandomBlessing(),
-  });
-
-  form.reset();
+  messages.push({ name, content, character });
+  messageForm.reset();
+  currentCharacter = character;
+  displayStep = 0;
   renderMessages();
 });
 
-function getRandomBlessing() {
-  const blessings = [
-    '祝你天天開心！',
-    '生日快樂，一切順利！',
-    '願你心想事成！',
-    '蒟蒻信也偷偷祝福你～',
-  ];
-  return blessings[Math.floor(Math.random() * blessings.length)];
-}
+app.addEventListener('click', () => {
+  if (!currentCharacter) return;
+
+  displayStep = (displayStep + 1) % 4;
+  renderMessages();
+});
 
 function renderMessages() {
   app.innerHTML = '';
-  messages.forEach((msg, index) => {
-    const block = document.createElement('div');
-    block.className = 'message-block';
-    block.dataset.index = index;
-    block.dataset.state = 0;
 
-    const img = document.createElement('img');
-    img.src = `images/${msg.character}.png`;
-    img.alt = msg.character;
-    img.className = 'character-img';
-    block.appendChild(img);
+  const currentMessages = messages.filter(msg => msg.character === currentCharacter || displayStep === 3);
 
-    app.appendChild(block);
+  currentMessages.forEach(msg => {
+    const div = document.createElement('div');
+    let imagePath = `images/${msg.character}.png`;
 
-    block.addEventListener('click', () => {
-      let currentState = parseInt(block.dataset.state);
-      block.innerHTML = '';
+    let content = '';
+    if (displayStep === 0) {
+      content = `<img src="${imagePath}" alt="${msg.character}">`;
+    } else if (displayStep === 1) {
+      content = `<p>${msg.name}：${msg.content}</p>`;
+    } else if (displayStep === 2) {
+      const blessing = blessings[Math.floor(Math.random() * blessings.length)];
+      content = `<p>${msg.name}：${msg.content}</p><p>${blessing}</p>`;
+    } else {
+      content = `<img src="images/${currentCharacter}.png" alt="${currentCharacter}">`;
+    }
 
-      if (currentState === 0) {
-        const p = document.createElement('p');
-        p.textContent = `${msg.name}：${msg.message}`;
-        block.appendChild(p);
-      } else if (currentState === 1) {
-        const p = document.createElement('p');
-        p.textContent = msg.blessing;
-        block.appendChild(p);
-      } else if (currentState === 2) {
-        const img = document.createElement('img');
-        img.src = `images/${msg.character}.png`;
-        img.alt = msg.character;
-        img.className = 'character-img';
-        block.appendChild(img);
-      }
-
-      block.dataset.state = (currentState + 1) % 3;
-    });
+    div.innerHTML = content;
+    app.appendChild(div);
   });
 }
