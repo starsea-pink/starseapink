@@ -4,6 +4,7 @@
   <meta charset="UTF-8">
   <title>蒟蒻信的生日悶騷留言板</title>
   <link rel="stylesheet" href="style.css">
+  <link rel="icon" href="favicon.ico" type="image/x-icon">
 </head>
 <body>
   <button id="musicToggle">播放音樂</button>
@@ -13,7 +14,7 @@
   </audio>
 
   <div class="container">
-    <h1>蒟蒻信的生日生日悶騷留言板</h1>
+    <h1>蒟蒻信的生日悶騷留言板</h1>
     <p id="messageCount"></p>
 
     <form id="messageForm">
@@ -24,7 +25,7 @@
       <textarea name="message" required></textarea>
 
       <label for="character">選擇代表角色：</label>
-      <select name="character" required>
+      <select name="character">
         <option value="Luffy">魯夫</option>
         <option value="Zoro">索隆</option>
         <option value="Sanji">香吉士</option>
@@ -36,28 +37,18 @@
         <option value="Hancock">女帝</option>
         <option value="beauty1">性感美女1</option>
         <option value="beauty2">性感美女2</option>
-        <option value="special">小屁股蛋</option>
       </select>
 
       <button type="submit">送出留言</button>
     </form>
 
-    <div id="app"></div>
+    <div id="displayArea">
+      <img id="characterImage" src="" alt="角色圖">
+      <p id="messageText"></p>
+      <p id="randomBlessing"></p>
+    </div>
   </div>
 
-  <script>
-    const bgMusic = document.getElementById('bgMusic');
-    const musicToggle = document.getElementById('musicToggle');
-    musicToggle.addEventListener('click', () => {
-      if (bgMusic.paused) {
-        bgMusic.play();
-        musicToggle.textContent = '暫停音樂';
-      } else {
-        bgMusic.pause();
-        musicToggle.textContent = '播放音樂';
-      }
-    });
-  </script>
   <script src="main.js"></script>
 </body>
 </html>
