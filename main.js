@@ -1,14 +1,15 @@
 const form = document.getElementById('messageForm');
 const app = document.getElementById('app');
-const messageCount = document.getElementById('messageCount');
+const messageCountEl = document.getElementById('messageCount');
 
-let messages = JSON.parse(localStorage.getItem('messages')) || [];
+let messages = [];
+let displayIndex = 0;
 let originalCharacter = null;
-let clickStep = 0;
-
 const blessings = [
-  "願你天天笑得像魯夫一樣開懷！",
-  "祝你像索隆一樣堅定勇敢！",
+  "生日快樂！願你天天開心！",
+  "你最棒！今天也要幸福喔！",
+  "希望你的人生像航海王一樣精彩！",
+  "祝你一整年都像魯夫吃到肉一樣快樂！",
   "希望你每天都能像娜美數錢一樣快樂～",
   "人生就該像佛朗基一樣超～級～！",
   "祝你魅力爆棚，像羅賓一樣優雅神秘～",
@@ -27,28 +28,7 @@ const blessings = [
   "每天都被幸福包圍！",
   "祝你擁有香吉士的美食與羅賓的智慧！"
 ];
-function saveMessages() {
-  localStorage.setItem('messages', JSON.stringify(messages));
-}
-
-function renderMessages() {
-  app.innerHTML = '';
-  messages.forEach((msg, index) => {
-    const msgDiv = document.createElement('div');
-    msgDiv.className = 'message';
-    msgDiv.innerHTML = `
-      <img src="images/${msg.character}.png" class="avatar" data-index="${index}">
-      <div class="text" style="display:none">
-        <strong>${msg.name}</strong>：${msg.message}<br>
-        <em>${msg.blessing}</em>
-      </div>
-    `;
-    app.appendChild(msgDiv);
-  });
-  messageCount.textContent = `目前共有 ${messages.length} 則悶騷留言`;
-}
-
-form.addEventListener('submit', (e) => {
+form.addEventListener('submit', function (e) {
   e.preventDefault();
 
   const name = form.name.value.trim();
@@ -58,46 +38,80 @@ form.addEventListener('submit', (e) => {
   if (!name || !message) return;
 
   if (name === '夏夕夏景') {
-    if (confirm('輸入「夏夕夏景」將會清除所有留言，確定嗎？')) {
+    if (confirm('你輸入了特殊代碼，將會清除所有留言，確定嗎？')) {
       messages = [];
-      saveMessages();
-      renderMessages();
+      updateMessageCount();
+      app.innerHTML = '';
     }
     return;
   }
 
-  if (message.includes('小屁股蛋')) {
+  if (name === '小屁股蛋') {
     character = 'special';
   }
 
-  const blessing = blessings[Math.floor(Math.random() * blessings.length)];
-  messages.push({ name, message, character, blessing });
-  saveMessages();
-  renderMessages();
+  const newMessage = { name, message, character };
+  messages.push(newMessage);
+  updateMessageCount();
+
+  displayIndex = 0;
+  originalCharacter = character;
+  displayMessage(newMessage);
+
   form.reset();
 });
 
-app.addEventListener('click', (e) => {
-  if (e.target.classList.contains('avatar')) {
-    const index = parseInt(e.target.dataset.index);
-    const msgEl = e.target.nextElementSibling;
-    const msg = messages[index];
+function updateMessageCount() {
+  messageCountEl.textContent = `目前共有 ${messages.length} 則留言`;
+}
 
-    clickStep = (clickStep + 1) % 4;
+function displayMessage(data) {
+  const messageDiv = document.createElement('div');
+  messageDiv.className = 'message';
 
-    if (clickStep === 0) {
-      e.target.src = `images/${msg.character}.png`;
-      msgEl.style.display = 'none';
-    } else if (clickStep === 1) {
-      e.target.src = `images/${msg.character}.png`;
-      msgEl.style.display = 'none';
-    } else if (clickStep === 2) {
-      msgEl.style.display = 'block';
-    } else if (clickStep === 3) {
-      msgEl.innerHTML += `<br><strong>🎁 ${msg.blessing}</strong>`;
+  const img = document.createElement('img');
+  img.src = `images/${data.character}.png`;
+  img.alt = data.character;
+
+  const nameP = document.createElement('p');
+  nameP.textContent = `${data.name} 說：`;
+
+  const contentP = document.createElement('p');
+  contentP.textContent = data.message;
+
+  const blessingP = document.createElement('p');
+  blessingP.className = 'blessing';
+  blessingP.textContent = blessings[Math.floor(Math.random() * blessings.length)];
+
+  messageDiv.appendChild(img);
+  messageDiv.appendChild(nameP);
+  messageDiv.appendChild(contentP);
+  messageDiv.appendChild(blessingP);
+
+  // 初始狀態：只顯示角色
+  contentP.style.display = 'none';
+  blessingP.style.display = 'none';
+
+  let clickCount = 0;
+  messageDiv.addEventListener('click', () => {
+    clickCount++;
+    switch (clickCount % 4) {
+      case 1:
+        contentP.style.display = 'block';
+        break;
+      case 2:
+        blessingP.style.display = 'block';
+        break;
+      case 3:
+        img.src = `images/${originalCharacter}.png`;
+        break;
+      default:
+        contentP.style.display = 'none';
+        blessingP.style.display = 'none';
+        img.src = `images/${data.character}.png`;
+        break;
     }
-  }
-});
+  });
 
-// 初次載入畫面
-renderMessages();
+  app.appendChild(messageDiv);
+}

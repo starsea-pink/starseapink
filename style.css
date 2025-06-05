@@ -1,73 +1,65 @@
 body {
-  font-family: "Microsoft JhengHei", sans-serif;
+  font-family: Arial, sans-serif;
+  background-image: url('images/background.png');
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-attachment: fixed;
   margin: 0;
-  padding: 0;
-  background-color:url("images/background.png")no-repeat center center fixed;
-  background-size:cover;
+  padding: 20px;
   color: #333;
 }
 
 .container {
-  background: rgba(255, 255, 255, 0.8);
-  margin: 2rem auto;
-  padding: 2rem;
-  max-width: 800px;
-  border-radius: 12px;
-  box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
-}
-
-h1 {
-  text-align: center;
+  background-color: rgba(255, 255, 255, 0.9);
+  border-radius: 10px;
+  padding: 20px;
+  max-width: 700px;
+  margin: auto;
+  box-shadow: 0 0 10px rgba(0,0,0,0.3);
 }
 
 form {
-  margin-bottom: 2rem;
+  display: flex;
+  flex-direction: column;
 }
 
-label {
-  display: block;
-  margin-top: 1rem;
-  font-weight: bold;
-}
-
-input[type="text"],
-textarea,
-select {
-  width: 100%;
-  padding: 0.5rem;
-  margin-top: 0.25rem;
+input, textarea, select {
+  margin-bottom: 15px;
+  padding: 8px;
   border-radius: 5px;
-  border: 1px solid #ccc;
+  border: 1px solid #aaa;
 }
 
 button {
-  margin-top: 1rem;
-  padding: 0.5rem 1rem;
+  padding: 10px;
   border: none;
-  background-color: #ffa07a;
+  background-color: #ff6b6b;
   color: white;
+  font-size: 16px;
   border-radius: 5px;
   cursor: pointer;
 }
 
-#app .message {
-  margin-top: 1rem;
-  padding: 1rem;
-  background: #fff;
-  border-left: 5px solid #ffa07a;
+button:hover {
+  background-color: #ff4757;
+}
+
+.message {
+  margin-top: 20px;
+  padding: 10px;
+  border: 1px dashed #aaa;
+  background-color: #fff5f5;
   border-radius: 8px;
-  position: relative;
   cursor: pointer;
 }
 
 .message img {
-  max-width: 120px;
+  max-height: 150px;
   display: block;
-  margin-bottom: 0.5rem;
+  margin-bottom: 10px;
 }
 
-.message .time {
-  font-size: 0.8rem;
-  color: #888;
-  margin-top: 0.25rem;
+.message .blessing {
+  color: #d35400;
+  font-weight: bold;
 }
