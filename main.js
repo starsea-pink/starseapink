@@ -1,9 +1,6 @@
 const form = document.getElementById('messageForm');
 const app = document.getElementById('app');
 const messageCount = document.getElementById('messageCount');
-let messages = [];
-let displayStep = 0;
-let currentIndex = 0;
 
 const blessings = [
   '生日快樂！希望你天天都像魯夫一樣開朗！',
@@ -15,61 +12,73 @@ const blessings = [
   '每天都被幸福包圍！',
   '祝你擁有香吉士的美食與羅賓的智慧！'
 ];
-form.addEventListener('submit', (e) => {
-  e.preventDefault();
-  const name = form.name.value.trim();
-  const content = form.message.value.trim();
-  let character = form.character.value;
 
-  if (!name || !content) return;
-
-  if (name === '夏夕夏景') {
-    messages = [];
-    renderMessages();
-    alert('已清除所有留言！');
-    return;
-  }
-
-  if (name === '小屁股蛋') {
-    character = 'special';
-  }
-
-  messages.push({ name, content, character });
-  form.reset();
-  currentIndex = messages.length - 1;
-  displayStep = 0;
-  showMessage();
-  updateMessageCount();
-});
-
-function showMessage() {
-  if (messages.length === 0) return;
-  const { name, content, character } = messages[currentIndex];
-
-  let html = '';
-  if (displayStep === 0) {
-    html = `<p><strong>${name}</strong> 使用了 <strong>${character}</strong> 角色！</p>`;
-  } else if (displayStep === 1) {
-    html = `<p><strong>${name}</strong> 說：${content}</p>`;
-  } else if (displayStep === 2) {
-    const bless = blessings[Math.floor(Math.random() * blessings.length)];
-    html = `<p><em>${bless}</em></p>`;
-  } else {
-    displayStep = -1; // will be 0 on next ++
-    currentIndex = (currentIndex + 1) % messages.length;
-    html = '';
-  }
-
-  app.innerHTML = html;
-  displayStep++;
-}
-
-app.addEventListener('click', showMessage);
+let messages = JSON.parse(localStorage.getItem('messages')) || [];
 
 function renderMessages() {
   app.innerHTML = '';
+  messages.forEach((msg, index) => {
+    const block = document.createElement('div');
+    block.className = 'message-block';
+
+    const img = document.createElement('img');
+    img.src = `images/${msg.character}.png`;
+    img.alt = msg.character;
+
+    let state = 0;
+    block.appendChild(img);
+
+    block.addEventListener('click', () => {
+      state = (state + 1) % 4;
+      block.innerHTML = '';
+      if (state === 0) {
+        const img = document.createElement('img');
+        img.src = `images/${msg.character}.png`;
+        block.appendChild(img);
+      } else if (state === 1) {
+        const p = document.createElement('p');
+        p.textContent = `${msg.name}：${msg.message}`;
+        block.appendChild(p);
+      } else if (state === 2) {
+        const p = document.createElement('p');
+        p.textContent = blessings[Math.floor(Math.random() * blessings.length)];
+        block.appendChild(p);
+      } else if (state === 3) {
+        const img = document.createElement('img');
+        img.src = `images/${msg.character}.png`;
+        block.appendChild(img);
+      }
+    });
+
+    app.appendChild(block);
+  });
+
+  messageCount.textContent = `目前留言數：${messages.length}`;
 }
 
-function updateMessageCount() {
-  messageCount.textContent = `目前共有 ${messages.length} 則留言`;
-}
+form.addEventListener('submit', (e) => {
+  e.preventDefault();
+  const name = form.name.value.trim();
+  const message = form.message.value.trim();
+  let character = form.character.value;
+
+  if (name === '夏夕夏景') {
+    if (confirm('你確定要清除所有留言嗎？')) {
+      localStorage.removeItem('messages');
+      messages = [];
+      renderMessages();
+    }
+    return;
+  }
+
+  if (message.includes('小屁股蛋')) {
+    character = 'special';
+  }
+
+  messages.push({ name, message, character });
+  localStorage.setItem('messages', JSON.stringify(messages));
+  form.reset();
+  renderMessages();
+});
+
+renderMessages();
