@@ -30,94 +30,6 @@ let currentState = 0;
 let currentCharacter = "";
 let allMessages = JSON.parse(localStorage.getItem('messages')) || [];
 
-function saveMessages() {
-  localStorage.setItem('messages', JSON.stringify(allMessages));
-}
-function renderMessages(character) {
-  const filtered = allMessages.filter(msg => msg.character === character);
-  messageCount.textContent = `共有 ${filtered.length} 筆「${character}」的留言`;
-  app.innerHTML = filtered.map((msg, index) => `
-    <div class="message">.
-      <img class="avatar" src="${msg.avatarUrl}" alt="${msg.name}的頭像" />
-      <strong>${msg.name}</strong> 說：${msg.content}<br>
-      <em>${msg.time}</em><br>
-      <span class="blessing">${msg.blessing ? msg.blessing : ''}</span>
-    </div>
-  `).join('');
-}
-form.addEventListener('submit', e => {
-  e.preventDefault();
-  const name = form.name.value.trim();
-  const content = form.message.value.trim();
-  let character = characterSelect.value;
-  const avatarUrl = getAvatarUrl(name, character);
-  // 特殊處理小屁股蛋 or 夏夕夏景
-  if (content === '小屁股蛋' || content === '夏夕夏景') {
-    character = 'special';
-    if (content === '夏夕夏景') {
-      if (confirm('輸入夏夕夏景將清除所有留言，確定嗎？')) {
-        allMessages = [];
-        saveMessages();
-        app.innerHTML = '';
-        messageCount.textContent = '已清除所有留言。';
-        return;
-      }
-    }
-  }
-  const time = new Date().toLocaleString('zh-TW');
-  const message = {
-    name,
-    content,
-    character,
-    time,
-    blessing: '',
-    avatarUrl
-  };
-  allMessages.push(message);
-  saveMessages();
-  currentCharacter = character;
-  currentState = 1;
-  renderMessages(character);
-  form.reset();
-});
-app.addEventListener('click', () => {
-  if (!currentCharacter) return;
-
-  const filtered = allMessages.filter(msg => msg.character === currentCharacter);
-  if (filtered.length === 0) return;
-  currentState = (currentState + 1) % 4;
-  switch (currentState) {
-    case 1:
-      // 顯示留言內容
-      renderMessages(currentCharacter);
-      break;
-    case 2:
-      // 加上隨機祝福
-      filtered.forEach(msg => {
-        if (!msg.blessing) {
-          msg.blessing = blessings[Math.floor(Math.random() * blessings.length)];
-        }
-      });
-      saveMessages();
-      renderMessages(currentCharacter);
-      break;
-    case 3:
-      // 回到原始角色列表（即清空展示）
-      app.innerHTML = '';
-      messageCount.textContent = `你已切換出「${currentCharacter}」留言`;
-      break;
-    default:
-      // 第一次點擊後顯示該角色留言
-      renderMessages(currentCharacter);
-      break;
-  }
-});
-// 初始渲染（可根據預設角色改變）
-if (allMessages.length > 0) {
-  currentCharacter = allMessages[allMessages.length - 1].character;
-  renderMessages(currentCharacter);
-}
-
 function getAvatarUrl(name, avatarKey) {
   if (name === "小屁股蛋") {
     return "https://i.imgur.com/QXbaF3x.png";
@@ -136,4 +48,102 @@ function getAvatarUrl(name, avatarKey) {
   };
 
   return avatars[avatarKey] || "https://i.imgur.com/default-avatar.png";
+}
+
+function saveMessages() {
+  localStorage.setItem('messages', JSON.stringify(allMessages));
+}
+
+function renderMessages(character) {
+  console.log("character:" + character);
+  const filtered = allMessages.filter(msg => msg.character === character);
+  messageCount.textContent = `共有 ${filtered.length} 筆「${character}」的留言`;
+  app.innerHTML = filtered.map((msg, index) => `
+    <div class="message">
+      <img class="avatar" src="${msg.avatarUrl}" alt="${msg.name}的頭像" />
+      <strong>${msg.name}</strong> 說：${msg.content}<br>
+      <em>${msg.time}</em><br>
+      <span class="blessing">${msg.blessing ? msg.blessing : ''}</span>
+    </div>
+  `).join('');
+}
+
+form.addEventListener('submit', e => {
+  e.preventDefault();
+  const name = form.name.value.trim();
+  const content = form.message.value.trim();
+  let character = characterSelect.value;
+  const avatarUrl = getAvatarUrl(name, character);
+  // 特殊處理小屁股蛋 or 夏夕夏景
+  if (name === '小屁股蛋' || name === '夏夕夏景') {
+    character = 'special';
+    if (name === '夏夕夏景') {
+      if (confirm('輸入夏夕夏景將清除所有留言，確定嗎？')) {
+        allMessages = [];
+        saveMessages();
+        app.innerHTML = '';
+        messageCount.textContent = '已清除所有留言。';
+        return;
+      }
+    }
+  }
+  const time = new Date().toLocaleString('zh-TW');
+  const message = {
+    name,
+    content,
+    character,
+    time,
+    blessing: '',
+    avatarUrl
+  };
+
+  allMessages.push(message);
+  saveMessages();
+  currentCharacter = character;
+  currentState = 1;
+  renderMessages(character);
+  form.reset();
+});
+
+app.addEventListener('click', () => {
+  if (!currentCharacter) return;
+  console.log(currentState);
+  const filtered = allMessages.filter(msg => msg.character === currentCharacter);
+  if (filtered.length === 0) return;
+  currentState = (currentState + 1) % 4;
+  console.log(currentState);
+  switch (currentState) {
+    case 0:
+      // 顯示留言內容
+      alert('shjit');
+      break;
+    case 1:
+      // 顯示留言內容
+      renderMessages(currentCharacter);
+      break;
+    case 2:
+      // 加上隨機祝福
+      filtered.forEach(msg => {
+        if (!msg.blessing) {
+          msg.blessing = blessings[Math.floor(Math.random() * blessings.length)];
+        }
+      });
+      saveMessages();
+      renderMessages(currentCharacter);
+      break;
+    case 3:
+      // 回到原始角色列表（即清空展示）
+      //app.innerHTML = '';
+      renderMessages(currentCharacter);
+      break;
+    default:
+      // 第一次點擊後顯示該角色留言
+      renderMessages(currentCharacter);
+      break;
+  }
+});
+// 初始渲染（可根據預設角色改變）
+if (allMessages.length > 0) {
+  currentCharacter = allMessages[allMessages.length - 1].character;
+  renderMessages(currentCharacter);
 }
