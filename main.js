@@ -1,26 +1,30 @@
-const app = document.getElementById("app");
-const form = document.getElementById("messageForm");
-const messageCount = document.getElementById("messageCount");
-let messages = [];
-let originalCharacter = "";
-let clickCount = 0;
+const messageForm = document.getElementById('messageForm');
+const app = document.getElementById('app');
+const messageCount = document.getElementById('messageCount');
 
-const characterImages = {
-  Luffy: "Luffy.png",
-  Zoro: "Zoro.png",
-  Sanji: "Sanji.png",
-  Nami: "Nami.png",
-  Robin: "Robin.png",
-  Chopper: "Chopper.png",
-  Usopp: "Usopp.png",
-  Franky: "Franky.png",
-  Hancock: "Hancock.png",
-  beauty1: "beauty1.png",
-  beauty2: "beauty2.png",
-  special: "special.png",
-};
+let messages = JSON.parse(localStorage.getItem('messages')) || [];
+let currentIndex = 0;
 
-const randomBlessings = [
+function saveMessages() {
+  localStorage.setItem('messages', JSON.stringify(messages));
+}
+
+function renderMessages() {
+  app.innerHTML = '';
+  messages.forEach((msg, index) => {
+    const msgDiv = document.createElement('div');
+    msgDiv.className = 'message';
+    msgDiv.innerHTML = `
+      <p><strong>${msg.name}</strong> 選擇了角色 <strong>${msg.character}</strong>：</p>
+      <p>${msg.message}</p>
+      <p class="blessing">${msg.blessing}</p>
+    `;
+    app.appendChild(msgDiv);
+  });
+  messageCount.textContent = `目前留言數：${messages.length}`;
+}
+
+const blessings = [
   "生日快樂！記得每天都要笑一下！",
   "願你天天都有好心情！",
   "悶騷也可以很快樂！",
@@ -33,77 +37,37 @@ const randomBlessings = [
   "希望你心想事成！",
   "蒟蒻信也偷偷祝福你～",
   "每天都被幸福包圍！",
-  "祝你擁有香吉士的美食與羅賓的智慧！"
+  "祝你擁有香吉士的美食與羅賓的智慧！",
+  "願你今年超越自己、變得更帥！",
+  "祝你電動打不完、虛寶抽到爽！",
+  "天天都有人陪你釣蝦聊天吃宵夜！",
+  "人生海海，有我相伴最精彩！",
+  "願你心情不再憂鬱，只有快樂。"
 ];
-
-// 清除所有留言
-function clearMessages() {
-  messages = [];
-  updateMessages();
-}
-
-// 更新留言區
-function updateMessages() {
-  app.innerHTML = "";
-  messages.forEach((msg, index) => {
-    const msgDiv = document.createElement("div");
-    msgDiv.className = "message";
-
-    const img = document.createElement("img");
-    img.src = `images/${characterImages[msg.character]}`;
-    img.alt = msg.character;
-
-    const text = document.createElement("p");
-    text.innerHTML = `<strong>${msg.name}：</strong>`;
-
-    msgDiv.appendChild(img);
-    msgDiv.appendChild(text);
-
-    msgDiv.addEventListener("click", () => {
-      clickCount++;
-      if (clickCount % 4 === 1) {
-        text.innerHTML = `<strong>${msg.name}：</strong><br><em>留言內容</em>`;
-      } else if (clickCount % 4 === 2) {
-        text.innerHTML = `<strong>${msg.name}：</strong><br>${msg.message}`;
-      } else if (clickCount % 4 === 3) {
-        text.innerHTML = `<strong>${msg.name}：</strong><br>${msg.message}<br><em>${getRandomBlessing()}</em>`;
-      } else {
-        text.innerHTML = `<strong>${msg.name}：</strong>`;
-      }
-    });
-
-    app.appendChild(msgDiv);
-  });
-
-  messageCount.textContent = `目前共有 ${messages.length} 筆悶騷留言`;
-}
-
-// 隨機祝福語
-function getRandomBlessing() {
-  return randomBlessings[Math.floor(Math.random() * randomBlessings.length)];
-}
-
-// 表單提交
-form.addEventListener("submit", function (e) {
+messageForm.addEventListener('submit', (e) => {
   e.preventDefault();
-  const name = form.name.value.trim();
-  let character = form.character.value;
-  const message = form.message.value.trim();
+  const name = messageForm.name.value.trim();
+  const message = messageForm.message.value.trim();
+  let character = messageForm.character.value;
 
-  if (!name || !message) return;
-
-  // 檢查是否為「夏夕夏景」
-  if (name === "夏夕夏景" || message.includes("夏夕夏景")) {
-    clearMessages();
+  if (name === '夏夕夏景') {
+    alert("⚠️ 輸入特殊代號，將清除所有留言！");
+    messages = [];
+    saveMessages();
+    renderMessages();
     return;
   }
 
-  // 特殊隱藏角色觸發
-  if (name === "小屁股蛋" || message.includes("小屁股蛋")) {
-    character = "special";
+  if (name === '小屁股蛋') {
+    character = 'special';
   }
 
-  messages.push({ name, message, character });
-  updateMessages();
-  form.reset();
+  const blessing = blessings[Math.floor(Math.random() * blessings.length)];
+
+  messages.push({ name, message, character, blessing });
+  saveMessages();
+  renderMessages();
+  messageForm.reset();
 });
+
+renderMessages();
