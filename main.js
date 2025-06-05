@@ -1,10 +1,14 @@
-const form = document.getElementById('messageForm');
-const app = document.getElementById('app');
-const messageCount = document.getElementById('messageCount');
+const messageForm = document.getElementById("messageForm");
+const app = document.getElementById("app");
+const messageCount = document.getElementById("messageCount");
 
-const messages = [];
 const blessings = [
- "生日快樂！記得每天都要笑一下！",
+  "生日快樂！天天開心！",
+  "願你幸福每一天！",
+  "希望今天比昨天更快樂！",
+  "繼續帥氣一整年！",
+  "笑口常開最重要！",
+  "生日快樂！記得每天都要笑一下！",
   "願你天天都有好心情！",
   "悶騷也可以很快樂！",
   "祝你未來一年都比去年的今天更棒！",
@@ -18,110 +22,89 @@ const blessings = [
   "每天都被幸福包圍！",
   "祝你擁有香吉士的美食與羅賓的智慧！"
 ];
-let clickStage = 0;
-let lastCharacter = null;
+const storedMessages = JSON.parse(localStorage.getItem("messages")) || [];
+let currentIndex = 0;
 
-form.addEventListener('submit', function (e) {
-  e.preventDefault();
-  const name = form.name.value.trim();
-  const content = form.message.value.trim();
-  const character = form.character.value;
+function saveMessages() {
+  localStorage.setItem("messages", JSON.stringify(storedMessages));
+}
 
-  if (!name || !content) return;
+function createMessageCard(msgObj, index) {
+  const card = document.createElement("div");
+  card.className = "message-card";
 
-  // 若輸入「夏夕夏景」，清空所有留言
-  if (name === '夏夕夏景' || content === '夏夕夏景') {
-    if (confirm('你輸入了「夏夕夏景」，將會清除所有留言，確定嗎？')) {
-      messages.length = 0;
-      app.innerHTML = '';
-      messageCount.textContent = '';
-    }
-    return;
-  }
+  const avatar = document.createElement("img");
+  avatar.src = `images/${msgObj.character}.png`;
+  avatar.alt = msgObj.character;
+  avatar.className = "avatar";
 
-  const timestamp = new Date().toLocaleString();
+  const name = document.createElement("h3");
+  name.textContent = msgObj.name;
 
-  // 特殊角色處理
-  const displayCharacter = (name === '小屁股蛋' || content.includes('小屁股蛋')) ? 'special' : character;
+  const content = document.createElement("p");
+  content.textContent = msgObj.message;
+  content.style.display = "none";
 
-  const messageObj = {
-    name,
-    content,
-    character: displayCharacter,
-    timestamp,
-    id: messages.length
-  };
+  const bless = document.createElement("p");
+  bless.textContent = blessings[Math.floor(Math.random() * blessings.length)];
+  bless.className = "bless";
+  bless.style.display = "none";
 
-  messages.push(messageObj);
-  form.reset();
-  renderMessage(messageObj);
-  updateMessageCount();
+  const time = document.createElement("small");
+  time.textContent = `留言時間：${msgObj.time}`;
 
-  // 初始角色設定
-  lastCharacter = displayCharacter;
-  clickStage = 1;
-});
+  let clickState = 0;
 
-function renderMessage(msg) {
-  const msgDiv = document.createElement('div');
-  msgDiv.className = 'message-block';
-  msgDiv.dataset.character = msg.character;
-  msgDiv.dataset.id = msg.id;
+  card.appendChild(avatar);
+  card.appendChild(name);
+  card.appendChild(content);
+  card.appendChild(bless);
+  card.appendChild(time);
 
-  const characterImg = document.createElement('img');
-  characterImg.src = `images/${msg.character}.png`;
-  characterImg.alt = msg.character;
-
-  const nameP = document.createElement('p');
-  nameP.textContent = `${msg.name} 說：`;
-
-  const contentP = document.createElement('p');
-  contentP.textContent = msg.content;
-  contentP.classList.add('hidden');
-
-  const blessingP = document.createElement('p');
-  blessingP.textContent = blessings[Math.floor(Math.random() * blessings.length)];
-  blessingP.classList.add('hidden', 'blessing');
-
-  const timeP = document.createElement('p');
-  timeP.textContent = `留言時間：${msg.timestamp}`;
-  timeP.classList.add('hidden', 'timestamp');
-
-  msgDiv.appendChild(characterImg);
-  msgDiv.appendChild(nameP);
-  msgDiv.appendChild(contentP);
-  msgDiv.appendChild(blessingP);
-  msgDiv.appendChild(timeP);
-
-  msgDiv.addEventListener('click', function () {
-    clickStage = (clickStage + 1) % 4;
-
-    switch (clickStage) {
-      case 1: // 顯示留言內容
-        contentP.classList.remove('hidden');
-        blessingP.classList.add('hidden');
-        timeP.classList.add('hidden');
-        break;
-      case 2: // 顯示祝福
-        contentP.classList.add('hidden');
-        blessingP.classList.remove('hidden');
-        timeP.classList.add('hidden');
-        break;
-      case 3: // 顯示時間
-        blessingP.classList.add('hidden');
-        timeP.classList.remove('hidden');
-        break;
-      default: // 回到角色圖片
-        contentP.classList.add('hidden');
-        blessingP.classList.add('hidden');
-        timeP.classList.add('hidden');
-        break;
+  card.addEventListener("click", () => {
+    clickState++;
+    if (clickState % 4 === 1) {
+      avatar.style.display = "none";
+      content.style.display = "block";
+      bless.style.display = "none";
+    } else if (clickState % 4 === 2) {
+      avatar.style.display = "none";
+      content.style.display = "none";
+      bless.style.display = "block";
+    } else if (clickState % 4 === 3) {
+      avatar.style.display = "block";
+      content.style.display = "none";
+      bless.style.display = "none";
     }
   });
 
-  app.prepend(msgDiv);
+  return card;
 }
 
-function updateMessageCount() {
-  messageCount.textContent = `目前共 ${messages.length} 則留言`;
+function renderMessages() {
+  app.innerHTML = "";
+  storedMessages.forEach((msg, index) => {
+    const card = createMessageCard(msg, index);
+    app.appendChild(card);
+  });
+  messageCount.textContent = `目前共有 ${storedMessages.length} 則留言`;
 }
+
+messageForm.addEventListener("submit", (e) => {
+  e.preventDefault();
+  const name = messageForm.name.value.trim();
+  const message = messageForm.message.value.trim();
+  const character = messageForm.character.value;
+
+  if (!name || !message) return;
+
+  const time = new Date().toLocaleString("zh-TW");
+  const msgObj = { name, message, character, time };
+
+  storedMessages.push(msgObj);
+  saveMessages();
+  renderMessages();
+  messageForm.reset();
+});
+
+renderMessages();
