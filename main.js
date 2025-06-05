@@ -1,31 +1,10 @@
-const messageForm = document.getElementById('messageForm');
+const form = document.getElementById('messageForm');
 const app = document.getElementById('app');
 const messageCount = document.getElementById('messageCount');
 
-let messages = JSON.parse(localStorage.getItem('messages')) || [];
-let currentIndex = 0;
-
-function saveMessages() {
-  localStorage.setItem('messages', JSON.stringify(messages));
-}
-
-function renderMessages() {
-  app.innerHTML = '';
-  messages.forEach((msg, index) => {
-    const msgDiv = document.createElement('div');
-    msgDiv.className = 'message';
-    msgDiv.innerHTML = `
-      <p><strong>${msg.name}</strong> 選擇了角色 <strong>${msg.character}</strong>：</p>
-      <p>${msg.message}</p>
-      <p class="blessing">${msg.blessing}</p>
-    `;
-    app.appendChild(msgDiv);
-  });
-  messageCount.textContent = `目前留言數：${messages.length}`;
-}
-
+const messages = [];
 const blessings = [
-  "生日快樂！記得每天都要笑一下！",
+ "生日快樂！記得每天都要笑一下！",
   "願你天天都有好心情！",
   "悶騷也可以很快樂！",
   "祝你未來一年都比去年的今天更棒！",
@@ -37,37 +16,112 @@ const blessings = [
   "希望你心想事成！",
   "蒟蒻信也偷偷祝福你～",
   "每天都被幸福包圍！",
-  "祝你擁有香吉士的美食與羅賓的智慧！",
-  "願你今年超越自己、變得更帥！",
-  "祝你電動打不完、虛寶抽到爽！",
-  "天天都有人陪你釣蝦聊天吃宵夜！",
-  "人生海海，有我相伴最精彩！",
-  "願你心情不再憂鬱，只有快樂。"
+  "祝你擁有香吉士的美食與羅賓的智慧！"
 ];
-messageForm.addEventListener('submit', (e) => {
-  e.preventDefault();
-  const name = messageForm.name.value.trim();
-  const message = messageForm.message.value.trim();
-  let character = messageForm.character.value;
+let clickStage = 0;
+let lastCharacter = null;
 
-  if (name === '夏夕夏景') {
-    alert("⚠️ 輸入特殊代號，將清除所有留言！");
-    messages = [];
-    saveMessages();
-    renderMessages();
+form.addEventListener('submit', function (e) {
+  e.preventDefault();
+  const name = form.name.value.trim();
+  const content = form.message.value.trim();
+  const character = form.character.value;
+
+  if (!name || !content) return;
+
+  // 若輸入「夏夕夏景」，清空所有留言
+  if (name === '夏夕夏景' || content === '夏夕夏景') {
+    if (confirm('你輸入了「夏夕夏景」，將會清除所有留言，確定嗎？')) {
+      messages.length = 0;
+      app.innerHTML = '';
+      messageCount.textContent = '';
+    }
     return;
   }
 
-  if (name === '小屁股蛋') {
-    character = 'special';
-  }
+  const timestamp = new Date().toLocaleString();
 
-  const blessing = blessings[Math.floor(Math.random() * blessings.length)];
+  // 特殊角色處理
+  const displayCharacter = (name === '小屁股蛋' || content.includes('小屁股蛋')) ? 'special' : character;
 
-  messages.push({ name, message, character, blessing });
-  saveMessages();
-  renderMessages();
-  messageForm.reset();
+  const messageObj = {
+    name,
+    content,
+    character: displayCharacter,
+    timestamp,
+    id: messages.length
+  };
+
+  messages.push(messageObj);
+  form.reset();
+  renderMessage(messageObj);
+  updateMessageCount();
+
+  // 初始角色設定
+  lastCharacter = displayCharacter;
+  clickStage = 1;
 });
 
-renderMessages();
+function renderMessage(msg) {
+  const msgDiv = document.createElement('div');
+  msgDiv.className = 'message-block';
+  msgDiv.dataset.character = msg.character;
+  msgDiv.dataset.id = msg.id;
+
+  const characterImg = document.createElement('img');
+  characterImg.src = `images/${msg.character}.png`;
+  characterImg.alt = msg.character;
+
+  const nameP = document.createElement('p');
+  nameP.textContent = `${msg.name} 說：`;
+
+  const contentP = document.createElement('p');
+  contentP.textContent = msg.content;
+  contentP.classList.add('hidden');
+
+  const blessingP = document.createElement('p');
+  blessingP.textContent = blessings[Math.floor(Math.random() * blessings.length)];
+  blessingP.classList.add('hidden', 'blessing');
+
+  const timeP = document.createElement('p');
+  timeP.textContent = `留言時間：${msg.timestamp}`;
+  timeP.classList.add('hidden', 'timestamp');
+
+  msgDiv.appendChild(characterImg);
+  msgDiv.appendChild(nameP);
+  msgDiv.appendChild(contentP);
+  msgDiv.appendChild(blessingP);
+  msgDiv.appendChild(timeP);
+
+  msgDiv.addEventListener('click', function () {
+    clickStage = (clickStage + 1) % 4;
+
+    switch (clickStage) {
+      case 1: // 顯示留言內容
+        contentP.classList.remove('hidden');
+        blessingP.classList.add('hidden');
+        timeP.classList.add('hidden');
+        break;
+      case 2: // 顯示祝福
+        contentP.classList.add('hidden');
+        blessingP.classList.remove('hidden');
+        timeP.classList.add('hidden');
+        break;
+      case 3: // 顯示時間
+        blessingP.classList.add('hidden');
+        timeP.classList.remove('hidden');
+        break;
+      default: // 回到角色圖片
+        contentP.classList.add('hidden');
+        blessingP.classList.add('hidden');
+        timeP.classList.add('hidden');
+        break;
+    }
+  });
+
+  app.prepend(msgDiv);
+}
+
+function updateMessageCount() {
+  messageCount.textContent = `目前共 ${messages.length} 則留言`;
+}
