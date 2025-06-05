@@ -1,6 +1,10 @@
 const form = document.getElementById('messageForm');
 const app = document.getElementById('app');
-const messageCount = document.getElementById('messageCount');
+const messageCountDisplay = document.getElementById('messageCount');
+
+const characters = [
+  "Luffy", "Zoro", "Sanji", "Nami", "Robin", "Chopper", "Usopp", "Franky", "Hancock", "beauty1", "beauty2"
+];
 
 const blessings = [
   '生日快樂！希望你天天都像魯夫一樣開朗！',
@@ -13,72 +17,69 @@ const blessings = [
   '祝你擁有香吉士的美食與羅賓的智慧！'
 ];
 
-let messages = JSON.parse(localStorage.getItem('messages')) || [];
+let messages = JSON.parse(localStorage.getItem("messages") || "[]");
+
+function saveMessages() {
+  localStorage.setItem("messages", JSON.stringify(messages));
+}
 
 function renderMessages() {
   app.innerHTML = '';
+  messageCountDisplay.textContent = `目前留言數：${messages.length} 則`;
+
   messages.forEach((msg, index) => {
-    const block = document.createElement('div');
-    block.className = 'message-block';
+    const box = document.createElement('div');
+    box.className = 'message-box';
+    box.dataset.index = index;
 
-    const img = document.createElement('img');
-    img.src = `images/${msg.character}.png`;
-    img.alt = msg.character;
+    const characterImg = document.createElement('img');
+    characterImg.src = `images/${msg.character}.png`;
+    characterImg.alt = msg.character;
 
-    let state = 0;
-    block.appendChild(img);
+    const content = document.createElement('div');
+    content.className = 'message-content';
+    content.innerHTML = `<strong>${msg.name}</strong> 留言角色：${msg.character}<br><span class="timestamp">${msg.time}</span>`;
 
-    block.addEventListener('click', () => {
-      state = (state + 1) % 4;
-      block.innerHTML = '';
-      if (state === 0) {
-        const img = document.createElement('img');
-        img.src = `images/${msg.character}.png`;
-        block.appendChild(img);
-      } else if (state === 1) {
-        const p = document.createElement('p');
-        p.textContent = `${msg.name}：${msg.message}`;
-        block.appendChild(p);
-      } else if (state === 2) {
-        const p = document.createElement('p');
-        p.textContent = blessings[Math.floor(Math.random() * blessings.length)];
-        block.appendChild(p);
-      } else if (state === 3) {
-        const img = document.createElement('img');
-        img.src = `images/${msg.character}.png`;
-        block.appendChild(img);
+    let stage = 0;
+
+    characterImg.addEventListener('click', () => {
+      stage = (stage + 1) % 4;
+
+      if (stage === 1) {
+        content.innerHTML += `<br>👉 <strong>留言內容：</strong>${msg.message}`;
+      } else if (stage === 2) {
+        content.innerHTML += `<br>🎉 <strong>隨機祝福：</strong>${getRandomBlessing()}`;
+      } else if (stage === 3) {
+        renderMessages(); // 重設畫面
       }
     });
 
-    app.appendChild(block);
+    box.appendChild(content);
+    box.appendChild(characterImg);
+    app.appendChild(box);
   });
-
-  messageCount.textContent = `目前留言數：${messages.length}`;
 }
 
-form.addEventListener('submit', (e) => {
+function getRandomBlessing() {
+  return blessings[Math.floor(Math.random() * blessings.length)];
+}
+
+form.addEventListener('submit', e => {
   e.preventDefault();
   const name = form.name.value.trim();
   const message = form.message.value.trim();
   let character = form.character.value;
 
-  if (name === '夏夕夏景') {
-    if (confirm('你確定要清除所有留言嗎？')) {
-      localStorage.removeItem('messages');
-      messages = [];
-      renderMessages();
-    }
-    return;
+  if (name.includes("小屁股蛋") || message.includes("小屁股蛋")) {
+    character = "special";
   }
 
-  if (message.includes('小屁股蛋')) {
-    character = 'special';
-  }
+  const time = new Date().toLocaleString("zh-TW");
 
-  messages.push({ name, message, character });
-  localStorage.setItem('messages', JSON.stringify(messages));
-  form.reset();
+  messages.push({ name, message, character, time });
+  saveMessages();
   renderMessages();
+  form.reset();
 });
 
 renderMessages();
