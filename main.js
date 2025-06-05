@@ -1,13 +1,15 @@
-const messageForm = document.getElementById("messageForm");
-const app = document.getElementById("app");
-const messageCount = document.getElementById("messageCount");
+const form = document.getElementById('messageForm');
+const app = document.getElementById('app');
+const messageCount = document.getElementById('messageCount');
 
-const blessings = [
-  "生日快樂！天天開心！",
-  "願你幸福每一天！",
-  "希望今天比昨天更快樂！",
-  "繼續帥氣一整年！",
-  "笑口常開最重要！",
+let messages = [];
+let clickStep = 0;
+let currentCharacter = '';
+let randomBlessings = [
+  '祝你今天打電動大獲全勝！',
+  '祝你釣蝦釣到手軟～',
+  '今天也要開心、耍廢、吃飽飽',
+  '希望你今天沒被老闆煩到！',
   "生日快樂！記得每天都要笑一下！",
   "願你天天都有好心情！",
   "悶騷也可以很快樂！",
@@ -22,89 +24,77 @@ const blessings = [
   "每天都被幸福包圍！",
   "祝你擁有香吉士的美食與羅賓的智慧！"
 ];
-const storedMessages = JSON.parse(localStorage.getItem("messages")) || [];
-let currentIndex = 0;
-
-function saveMessages() {
-  localStorage.setItem("messages", JSON.stringify(storedMessages));
-}
-
-function createMessageCard(msgObj, index) {
-  const card = document.createElement("div");
-  card.className = "message-card";
-
-  const avatar = document.createElement("img");
-  avatar.src = `images/${msgObj.character}.png`;
-  avatar.alt = msgObj.character;
-  avatar.className = "avatar";
-
-  const name = document.createElement("h3");
-  name.textContent = msgObj.name;
-
-  const content = document.createElement("p");
-  content.textContent = msgObj.message;
-  content.style.display = "none";
-
-  const bless = document.createElement("p");
-  bless.textContent = blessings[Math.floor(Math.random() * blessings.length)];
-  bless.className = "bless";
-  bless.style.display = "none";
-
-  const time = document.createElement("small");
-  time.textContent = `留言時間：${msgObj.time}`;
-
-  let clickState = 0;
-
-  card.appendChild(avatar);
-  card.appendChild(name);
-  card.appendChild(content);
-  card.appendChild(bless);
-  card.appendChild(time);
-
-  card.addEventListener("click", () => {
-    clickState++;
-    if (clickState % 4 === 1) {
-      avatar.style.display = "none";
-      content.style.display = "block";
-      bless.style.display = "none";
-    } else if (clickState % 4 === 2) {
-      avatar.style.display = "none";
-      content.style.display = "none";
-      bless.style.display = "block";
-    } else if (clickState % 4 === 3) {
-      avatar.style.display = "block";
-      content.style.display = "none";
-      bless.style.display = "none";
-    }
+function renderMessages(character) {
+  app.innerHTML = '';
+  const filtered = messages.filter(msg => msg.character === character);
+  filtered.forEach(msg => {
+    const div = document.createElement('div');
+    div.classList.add('message');
+    div.innerHTML = `
+      <strong>${msg.name}</strong>（${msg.character}）:<br>
+      ${msg.message}<br>
+      <em>${msg.blessing || ''}</em>
+    `;
+    app.appendChild(div);
   });
 
-  return card;
+  messageCount.textContent = `目前共有 ${filtered.length} 則 ${character} 的留言`;
 }
 
-function renderMessages() {
-  app.innerHTML = "";
-  storedMessages.forEach((msg, index) => {
-    const card = createMessageCard(msg, index);
-    app.appendChild(card);
-  });
-  messageCount.textContent = `目前共有 ${storedMessages.length} 則留言`;
-}
-
-messageForm.addEventListener("submit", (e) => {
+form.addEventListener('submit', (e) => {
   e.preventDefault();
-  const name = messageForm.name.value.trim();
-  const message = messageForm.message.value.trim();
-  const character = messageForm.character.value;
+  const name = form.name.value.trim();
+  const message = form.message.value.trim();
+  let character = form.character.value;
 
-  if (!name || !message) return;
+  if (name === '夏夕夏景') {
+    alert('輸入夏夕夏景會清除所有留言！');
+    messages = [];
+    app.innerHTML = '';
+    messageCount.textContent = '';
+    return;
+  }
 
-  const time = new Date().toLocaleString("zh-TW");
-  const msgObj = { name, message, character, time };
+  if (name === '小屁股蛋') {
+    character = 'special';
+  }
 
-  storedMessages.push(msgObj);
-  saveMessages();
-  renderMessages();
-  messageForm.reset();
+  const newMessage = {
+    name,
+    message,
+    character,
+    blessing: ''
+  };
+
+  messages.push(newMessage);
+  currentCharacter = character;
+  clickStep = 0;
+  renderMessages(character);
+  form.reset();
 });
 
-renderMessages();
+app.addEventListener('click', () => {
+  if (!currentCharacter) return;
+  const currentMessages = messages.filter(m => m.character === currentCharacter);
+  if (currentMessages.length === 0) return;
+
+  clickStep++;
+  const lastMsg = currentMessages[currentMessages.length - 1];
+
+  switch (clickStep % 4) {
+    case 1:
+      app.innerHTML = `<div class="message"><strong>${lastMsg.name}</strong>（${lastMsg.character}）</div>`;
+      break;
+    case 2:
+      app.innerHTML = `<div class="message">${lastMsg.message}</div>`;
+      break;
+    case 3:
+      const blessing = randomBlessings[Math.floor(Math.random() * randomBlessings.length)];
+      lastMsg.blessing = blessing;
+      app.innerHTML = `<div class="message"><em>${blessing}</em></div>`;
+      break;
+    default:
+      renderMessages(currentCharacter);
+      break;
+  }
+});
