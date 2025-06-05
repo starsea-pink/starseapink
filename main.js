@@ -1,20 +1,30 @@
-const form = document.getElementById('messageForm');
-const app = document.getElementById('app');
-const messageCount = document.getElementById('messageCount');
-const characterSelect = form.character;
+const messageForm = document.getElementById("messageForm");
+const app = document.getElementById("app");
+const messageCount = document.getElementById("messageCount");
+
+let messages = [];
+let clickState = 0;
+let originalCharacter = "";
+let currentMessage = null;
 const blessings = [
-  "生日快樂！願你每天都有好心情～",
-  "希望你未來一年都順順利利！",
-  "身體健康，平安快樂！",
-  "祝你被好多好事砸中！",
-  "每天都充滿驚喜與愛！",
+  "生日快樂！天天都像海賊王一樣自由！",
+  "願你擁有香吉士的浪漫與好手藝～",
+  "祝你一年比一年更帥更可愛！",
+  "願你健康快樂又富有，如佛朗基的改造人生！",
+  "希望你像魯夫一樣無憂無慮，勇往直前！",
+  "生日快樂！願你天天開心！",
+  "你最棒！今天也要幸福喔！",
+  "希望你的人生像航海王一樣精彩！",
+  "祝你一整年都像魯夫吃到肉一樣快樂！",
+  "願你天天笑得像魯夫一樣開懷！",
+  "祝你像索隆一樣堅定勇敢！",
   "希望你每天都能像娜美數錢一樣快樂～",
   "人生就該像佛朗基一樣超～級～！",
   "祝你魅力爆棚，像羅賓一樣優雅神秘～",
   "別忘了休息，像喬巴一樣可愛療癒！",
   "每天都要讚美自己，像女帝一樣自信滿滿！",
   "像香吉士一樣暖心地寵愛生活吧～",
-  "生日快樂！記得每天都要笑一下！",
+  "記得每天都要笑一下！🎉",
   "願你天天都有好心情！",
   "悶騷也可以很快樂！",
   "祝你未來一年都比去年的今天更棒！",
@@ -24,126 +34,81 @@ const blessings = [
   "希望你心想事成！",
   "蒟蒻信也偷偷祝福你～",
   "每天都被幸福包圍！",
-  "祝你擁有香吉士的美食與羅賓的智慧！"
-];
-let currentState = 0;
-let currentCharacter = "";
-let allMessages = JSON.parse(localStorage.getItem('messages')) || [];
+  "祝你擁有香吉士的美食與羅賓的智慧！",
+  "願你每一天都充滿笑容 😄",
+  "祝你心想事成，幸福美滿 ✨",
+  "未來一年順順利利 🍀",
+  "願你天天都像今天一樣快樂 🥳",
+  "希望你未來一年都順順利利！",
+  "身體健康，平安快樂！",
+  "祝你被好多好事砸中！",
+  "每天都充滿驚喜與愛！",
+  ];
+// 初始化角色圖片顯示區
+const characterImg = document.createElement("img");
+characterImg.className = "character-img";
+app.appendChild(characterImg);
 
-function getAvatarUrl(name, avatarKey) {
-  if (name === "小屁股蛋") {
-    return "https://i.imgur.com/QXbaF3x.png";
+function updateMessageCount() {
+  messageCount.textContent = `目前共有 ${messages.length} 筆留言`;
+}
+
+function renderMessage(messageObj) {
+  currentMessage = messageObj;
+  characterImg.src = `images/${messageObj.character}.png`;
+  characterImg.alt = messageObj.character;
+  characterImg.dataset.original = messageObj.character;
+  characterImg.style.display = "block";
+}
+
+characterImg.addEventListener("click", () => {
+  if (!currentMessage) return;
+
+  clickState++;
+
+  if (clickState === 1) {
+    // 顯示留言內容
+    alert(`留言內容：${currentMessage.message}`);
+  } else if (clickState === 2) {
+    // 顯示祝福語
+    const randomBlessing = blessings[Math.floor(Math.random() * blessings.length)];
+    alert(`🎉 ${randomBlessing}`);
+  } else if (clickState === 3) {
+    // 點一下就切回原角色
+    characterImg.src = `images/${characterImg.dataset.original}.png`;
+    clickState = 0;
   }
+});
 
-  const avatars = {
-    Luffy: 'images/Luffy.png',
-    Nami: 'images/Nami.png',
-    Robin: 'images/Robin.png',
-    Hancock: 'images/Hancock.png',
-    Zoro: 'images/Zoro.png',
-    Sanji: 'images/Sanji.png',
-    beauty1: 'images/beauty1.png',
-    beauty2: 'images/beauty2.png',
-    Special: 'images/Special.png'
-  };
-
-  return avatars[avatarKey] || "https://i.imgur.com/default-avatar.png";
-}
-
-function saveMessages() {
-  localStorage.setItem('messages', JSON.stringify(allMessages));
-}
-
-function renderMessages(character) {
-  console.log("character:" + character);
-  const filtered = allMessages.filter(msg => msg.character === character);
-  messageCount.textContent = `共有 ${filtered.length} 筆「${character}」的留言`;
-  app.innerHTML = filtered.map((msg, index) => `
-    <div class="message">
-      <img class="avatar" src="${msg.avatarUrl}" alt="${msg.name}的頭像" />
-      <strong>${msg.name}</strong> 說：${msg.content}<br>
-      <em>${msg.time}</em><br>
-      <span class="blessing">${msg.blessing ? msg.blessing : ''}</span>
-    </div>
-  `).join('');
-}
-
-form.addEventListener('submit', e => {
+messageForm.addEventListener("submit", (e) => {
   e.preventDefault();
-  const name = form.name.value.trim();
-  const content = form.message.value.trim();
-  let character = characterSelect.value;
-  const avatarUrl = getAvatarUrl(name, character);
-  // 特殊處理小屁股蛋 or 夏夕夏景
-  if (name === '小屁股蛋' || name === '夏夕夏景') {
-    character = 'special';
-    if (name === '夏夕夏景') {
-      if (confirm('輸入夏夕夏景將清除所有留言，確定嗎？')) {
-        allMessages = [];
-        saveMessages();
-        app.innerHTML = '';
-        messageCount.textContent = '已清除所有留言。';
-        return;
-      }
+
+  const name = messageForm.name.value.trim();
+  const message = messageForm.message.value.trim();
+  let character = messageForm.character.value;
+
+  if (!name || !message) return;
+
+  // 清除所有留言條件
+  if (name === "夏夕夏景") {
+    if (confirm("你輸入了『夏夕夏景』，這將清除所有留言，確定嗎？")) {
+      messages = [];
+      updateMessageCount();
+      alert("留言已全部清除！");
     }
+    messageForm.reset();
+    return;
   }
-  const time = new Date().toLocaleString('zh-TW');
-  const message = {
-    name,
-    content,
-    character,
-    time,
-    blessing: '',
-    avatarUrl
-  };
 
-  allMessages.push(message);
-  saveMessages();
-  currentCharacter = character;
-  currentState = 1;
-  renderMessages(character);
-  form.reset();
-});
-
-app.addEventListener('click', () => {
-  if (!currentCharacter) return;
-  console.log(currentState);
-  const filtered = allMessages.filter(msg => msg.character === currentCharacter);
-  if (filtered.length === 0) return;
-  currentState = (currentState + 1) % 4;
-  console.log(currentState);
-  switch (currentState) {
-    case 0:
-      // 顯示留言內容
-      alert('shjit');
-      break;
-    case 1:
-      // 顯示留言內容
-      renderMessages(currentCharacter);
-      break;
-    case 2:
-      // 加上隨機祝福
-      filtered.forEach(msg => {
-        if (!msg.blessing) {
-          msg.blessing = blessings[Math.floor(Math.random() * blessings.length)];
-        }
-      });
-      saveMessages();
-      renderMessages(currentCharacter);
-      break;
-    case 3:
-      // 回到原始角色列表（即清空展示）
-      //app.innerHTML = '';
-      renderMessages(currentCharacter);
-      break;
-    default:
-      // 第一次點擊後顯示該角色留言
-      renderMessages(currentCharacter);
-      break;
+  if (name === "小屁股蛋") {
+    character = "special";
   }
+
+  const messageObj = { name, message, character };
+  messages.push(messageObj);
+
+  renderMessage(messageObj);
+  updateMessageCount();
+  messageForm.reset();
+  clickState = 0;
 });
-// 初始渲染（可根據預設角色改變）
-if (allMessages.length > 0) {
-  currentCharacter = allMessages[allMessages.length - 1].character;
-  renderMessages(currentCharacter);
-}
