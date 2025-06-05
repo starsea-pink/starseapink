@@ -1,15 +1,14 @@
 const form = document.getElementById('messageForm');
 const app = document.getElementById('app');
-const messageCountEl = document.getElementById('messageCount');
+const messageCount = document.getElementById('messageCount');
+const characterSelect = form.character;
 
-let messages = [];
-let displayIndex = 0;
-let originalCharacter = null;
 const blessings = [
-  "生日快樂！願你天天開心！",
-  "你最棒！今天也要幸福喔！",
-  "希望你的人生像航海王一樣精彩！",
-  "祝你一整年都像魯夫吃到肉一樣快樂！",
+  "生日快樂！願你每天都有好心情～",
+  "希望你未來一年都順順利利！",
+  "身體健康，平安快樂！",
+  "祝你被好多好事砸中！",
+  "每天都充滿驚喜與愛！",
   "希望你每天都能像娜美數錢一樣快樂～",
   "人生就該像佛朗基一樣超～級～！",
   "祝你魅力爆棚，像羅賓一樣優雅神秘～",
@@ -28,90 +27,99 @@ const blessings = [
   "每天都被幸福包圍！",
   "祝你擁有香吉士的美食與羅賓的智慧！"
 ];
-form.addEventListener('submit', function (e) {
+let currentState = 0;
+let currentCharacter = "";
+let allMessages = JSON.parse(localStorage.getItem('messages')) || [];
+
+function saveMessages() {
+  localStorage.setItem('messages', JSON.stringify(allMessages));
+}
+
+function renderMessages(character) {
+  const filtered = allMessages.filter(msg => msg.character === character);
+  messageCount.textContent = `共有 ${filtered.length} 筆「${character}」的留言`;
+  app.innerHTML = filtered.map((msg, index) => `
+    <div class="message">
+      <strong>${msg.name}</strong> 說：${msg.content}<br>
+      <em>${msg.time}</em><br>
+      ${msg.blessing ? <span class="blessing">${msg.blessing}</span> : ''}
+    </div>
+  `).join('');
+}
+
+form.addEventListener('submit', e => {
   e.preventDefault();
-
   const name = form.name.value.trim();
-  const message = form.message.value.trim();
-  let character = form.character.value;
+  const content = form.message.value.trim();
+  let character = characterSelect.value;
 
-  if (!name || !message) return;
-
-  if (name === '夏夕夏景') {
-    if (confirm('你輸入了特殊代碼，將會清除所有留言，確定嗎？')) {
-      messages = [];
-      updateMessageCount();
-      app.innerHTML = '';
-    }
-    return;
-  }
-
-  if (name === '小屁股蛋') {
+  // 特殊處理小屁股蛋 or 夏夕夏景
+  if (content === '小屁股蛋' || content === '夏夕夏景') {
     character = 'special';
+    if (content === '夏夕夏景') {
+      if (confirm('輸入夏夕夏景將清除所有留言，確定嗎？')) {
+        allMessages = [];
+        saveMessages();
+        app.innerHTML = '';
+        messageCount.textContent = '已清除所有留言。';
+        return;
+      }
+    }
   }
 
-  const newMessage = { name, message, character };
-  messages.push(newMessage);
-  updateMessageCount();
-
-  displayIndex = 0;
-  originalCharacter = character;
-  displayMessage(newMessage);
-
+  const time = new Date().toLocaleString('zh-TW');
+  const message = {
+    name,
+    content,
+    character,
+    time,
+    blessing: ''
+  };
+  allMessages.push(message);
+  saveMessages();
+  currentCharacter = character;
+  currentState = 1;
+  renderMessages(character);
   form.reset();
 });
 
-function updateMessageCount() {
-  messageCountEl.textContent = `目前共有 ${messages.length} 則留言`;
-}
+app.addEventListener('click', () => {
+  if (!currentCharacter) return;
 
-function displayMessage(data) {
-  const messageDiv = document.createElement('div');
-  messageDiv.className = 'message';
+  const filtered = allMessages.filter(msg => msg.character === currentCharacter);
+  if (filtered.length === 0) return;
 
-  const img = document.createElement('img');
-  img.src = `images/${data.character}.png`;
-  img.alt = data.character;
+  currentState = (currentState + 1) % 4;
 
-  const nameP = document.createElement('p');
-  nameP.textContent = `${data.name} 說：`;
+  switch (currentState) {
+    case 1:
+      // 顯示留言內容
+      renderMessages(currentCharacter);
+      break;
+    case 2:
+      // 加上隨機祝福
+      filtered.forEach(msg => {
+        if (!msg.blessing) {
+          msg.blessing = blessings[Math.floor(Math.random() * blessings.length)];
+        }
+      });
+      saveMessages();
+      renderMessages(currentCharacter);
+      break;
+    case 3:
+      // 回到原始角色列表（即清空展示）
+      app.innerHTML = '';
+      messageCount.textContent = `你已切換出「${currentCharacter}」留言`;
+      break;
+    default:
+      // 第一次點擊後顯示該角色留言
+      renderMessages(currentCharacter);
+      break;
+  }
+});
 
-  const contentP = document.createElement('p');
-  contentP.textContent = data.message;
-
-  const blessingP = document.createElement('p');
-  blessingP.className = 'blessing';
-  blessingP.textContent = blessings[Math.floor(Math.random() * blessings.length)];
-
-  messageDiv.appendChild(img);
-  messageDiv.appendChild(nameP);
-  messageDiv.appendChild(contentP);
-  messageDiv.appendChild(blessingP);
-
-  // 初始狀態：只顯示角色
-  contentP.style.display = 'none';
-  blessingP.style.display = 'none';
-
-  let clickCount = 0;
-  messageDiv.addEventListener('click', () => {
-    clickCount++;
-    switch (clickCount % 4) {
-      case 1:
-        contentP.style.display = 'block';
-        break;
-      case 2:
-        blessingP.style.display = 'block';
-        break;
-      case 3:
-        img.src = `images/${originalCharacter}.png`;
-        break;
-      default:
-        contentP.style.display = 'none';
-        blessingP.style.display = 'none';
-        img.src = `images/${data.character}.png`;
-        break;
-    }
-  });
-
-  app.appendChild(messageDiv);
+// 初始渲染（可根據預設角色改變）
+if (allMessages.length > 0) {
+  currentCharacter = allMessages[allMessages.length - 1].character;
+  renderMessages(currentCharacter);
 }

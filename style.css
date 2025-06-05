@@ -1,65 +1,92 @@
+/* 設定背景 */
 body {
-  font-family: Arial, sans-serif;
   background-image: url('images/background.png');
   background-size: cover;
+  background-position: center;
   background-repeat: no-repeat;
-  background-attachment: fixed;
+  font-family: "微軟正黑體", sans-serif;
+  color: #fff;
   margin: 0;
-  padding: 20px;
-  color: #333;
+  padding: 0;
 }
 
+/* 容器樣式 */
 .container {
-  background-color: rgba(255, 255, 255, 0.9);
-  border-radius: 10px;
-  padding: 20px;
+  background-color: rgba(0, 0, 0, 0.6);
   max-width: 700px;
-  margin: auto;
-  box-shadow: 0 0 10px rgba(0,0,0,0.3);
+  margin: 50px auto;
+  padding: 30px;
+  border-radius: 15px;
+  box-shadow: 0 0 15px #000;
 }
 
+/* 表單樣式 */
 form {
   display: flex;
   flex-direction: column;
+  gap: 10px;
 }
 
-input, textarea, select {
-  margin-bottom: 15px;
+input, textarea, select, button {
+  font-size: 16px;
   padding: 8px;
-  border-radius: 5px;
-  border: 1px solid #aaa;
+  border: none;
+  border-radius: 6px;
+}
+
+textarea {
+  height: 100px;
 }
 
 button {
-  padding: 10px;
-  border: none;
-  background-color: #ff6b6b;
-  color: white;
-  font-size: 16px;
-  border-radius: 5px;
+  background-color: #ff7f50;
+  color: #fff;
   cursor: pointer;
+  transition: background-color 0.3s;
 }
 
 button:hover {
-  background-color: #ff4757;
+  background-color: #ff6347;
+}
+
+/* 音樂按鈕 */
+#musicToggle {
+  position: fixed;
+  top: 15px;
+  right: 15px;
+  z-index: 999;
+  background-color: rgba(0, 0, 0, 0.7);
+}
+
+/* 留言區塊 */
+#app {
+  margin-top: 20px;
 }
 
 .message {
-  margin-top: 20px;
-  padding: 10px;
-  border: 1px dashed #aaa;
-  background-color: #fff5f5;
-  border-radius: 8px;
-  cursor: pointer;
+  background-color: rgba(255, 255, 255, 0.15);
+  padding: 15px;
+  border-radius: 10px;
+  margin-bottom: 15px;
+  position: relative;
 }
 
-.message img {
-  max-height: 150px;
-  display: block;
+/* 留言角色圖片 */
+.character-img {
+  width: 100px;
+  height: auto;
   margin-bottom: 10px;
+  display: block;
 }
 
-.message .blessing {
-  color: #d35400;
-  font-weight: bold;
+/* 留言者暱稱 */
+.message strong {
+  color: #ffd700;
+}
+
+/* 隨機祝福 */
+.blessing {
+  margin-top: 10px;
+  font-style: italic;
+  color: #90ee90;
 }
