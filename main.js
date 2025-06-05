@@ -2,7 +2,6 @@ const form = document.getElementById('messageForm');
 const app = document.getElementById('app');
 const messageCount = document.getElementById('messageCount');
 const characterSelect = form.character;
-
 const blessings = [
   "生日快樂！願你每天都有好心情～",
   "希望你未來一年都順順利利！",
