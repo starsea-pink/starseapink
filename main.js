@@ -1,109 +1,93 @@
-const form = document.getElementById("messageForm");
-const app = document.getElementById("app");
-const messageCount = document.getElementById("messageCount");
+const form = document.getElementById('messageForm');
+const app = document.getElementById('app');
+const messageCount = document.getElementById('messageCount');
 
-let messages = [];
-let toggleStates = new Map();
+let messages = JSON.parse(localStorage.getItem('messages')) || [];
+let originalCharacter = null;
+let clickStep = 0;
 
 const blessings = [
-  "願你天天都有好心情！",
-  "生日快樂！永遠年輕，永遠熱泪盈眶！",
-  "願你今年心想事成，萬事順利！",
-  "開心每一天，幸福不間斷！",
-  "你是最棒的，別懷疑！",
-  "生日快樂！記得每天都要笑一下！",
-  "祝你未來一年都比去年的今天更棒！",
-  "記得，每一天都值得慶祝～",
-  "生日快樂！希望你天天都像魯夫一樣開朗！",
-  "願你每天都像娜美一樣美麗動人！",
-  "祝你快樂如喬巴，勇敢如索隆！",
-  "希望你心想事成！",
-  "蒟蒻信也偷偷祝福你～",
-  "每天都被幸福包圍！",
-  "悶騷也可以很快樂！"
+  "願你天天笑得像魯夫一樣開懷！",
+  "祝你像索隆一樣堅定勇敢！",
+  "希望你每天都能像娜美數錢一樣快樂～",
+  "人生就該像佛朗基一樣超～級～！",
+  "祝你魅力爆棚，像羅賓一樣優雅神秘～",
+  "別忘了休息，像喬巴一樣可愛療癒！",
+  "每天都要讚美自己，像女帝一樣自信滿滿！",
+  "像香吉士一樣暖心地寵愛生活吧～"
 ];
 
-function createMessageElement(msg, index) {
-  const div = document.createElement("div");
-  div.className = "message";
-
-  const img = document.createElement("img");
-  img.src = `images/${msg.character}.png`;
-  img.alt = msg.character;
-
-  const name = document.createElement("div");
-  name.textContent = msg.name;
-
-  const time = document.createElement("div");
-  time.className = "time";
-  time.textContent = new Date(msg.timestamp).toLocaleString();
-
-  const message = document.createElement("div");
-  message.className = "msg-text";
-  message.textContent = msg.message;
-
-  const bless = document.createElement("div");
-  bless.className = "msg-bless";
-  bless.textContent = blessings[Math.floor(Math.random() * blessings.length)];
-
-  toggleStates.set(index, 0);
-
-  div.appendChild(img);
-  div.appendChild(name);
-  div.appendChild(time);
-
-  div.addEventListener("click", () => {
-    let state = toggleStates.get(index);
-    div.innerHTML = "";
-    if (state === 0) {
-      div.appendChild(img);
-      div.appendChild(name);
-      div.appendChild(time);
-      toggleStates.set(index, 1);
-    } else if (state === 1) {
-      div.appendChild(message);
-      toggleStates.set(index, 2);
-    } else if (state === 2) {
-      div.appendChild(bless);
-      toggleStates.set(index, 3);
-    } else {
-      div.appendChild(img);
-      div.appendChild(name);
-      div.appendChild(time);
-      toggleStates.set(index, 1);
-    }
-  });
-
-  return div;
+function saveMessages() {
+  localStorage.setItem('messages', JSON.stringify(messages));
 }
 
 function renderMessages() {
-  app.innerHTML = "";
+  app.innerHTML = '';
   messages.forEach((msg, index) => {
-    const msgElement = createMessageElement(msg, index);
-    app.appendChild(msgElement);
+    const msgDiv = document.createElement('div');
+    msgDiv.className = 'message';
+    msgDiv.innerHTML = `
+      <img src="images/${msg.character}.png" class="avatar" data-index="${index}">
+      <div class="text" style="display:none">
+        <strong>${msg.name}</strong>：${msg.message}<br>
+        <em>${msg.blessing}</em>
+      </div>
+    `;
+    app.appendChild(msgDiv);
   });
-  messageCount.textContent = `共有 ${messages.length} 則留言`;
+  messageCount.textContent = `目前共有 ${messages.length} 則悶騷留言`;
 }
 
-form.addEventListener("submit", (e) => {
+form.addEventListener('submit', (e) => {
   e.preventDefault();
-  const nameInput = form.elements["name"].value.trim();
-  const messageInput = form.elements["message"].value.trim();
-  let character = form.elements["character"].value;
-  let name = nameInput;
 
-  if (nameInput === "小屁股蛋") {
-    character = "special";
+  const name = form.name.value.trim();
+  const message = form.message.value.trim();
+  let character = form.character.value;
+
+  if (!name || !message) return;
+
+  if (name === '夏夕夏景') {
+    if (confirm('輸入「夏夕夏景」將會清除所有留言，確定嗎？')) {
+      messages = [];
+      saveMessages();
+      renderMessages();
+    }
+    return;
   }
 
-  messages.push({
-    name,
-    message: messageInput,
-    character,
-    timestamp: Date.now()
-  });
+  if (message.includes('小屁股蛋')) {
+    character = 'special';
+  }
 
-  form.reset();
+  const blessing = blessings[Math.floor(Math.random() * blessings.length)];
+  messages.push({ name, message, character, blessing });
+  saveMessages();
   renderMessages();
+  form.reset();
 });
+
+app.addEventListener('click', (e) => {
+  if (e.target.classList.contains('avatar')) {
+    const index = parseInt(e.target.dataset.index);
+    const msgEl = e.target.nextElementSibling;
+    const msg = messages[index];
+
+    clickStep = (clickStep + 1) % 4;
+
+    if (clickStep === 0) {
+      e.target.src = `images/${msg.character}.png`;
+      msgEl.style.display = 'none';
+    } else if (clickStep === 1) {
+      e.target.src = `images/${msg.character}.png`;
+      msgEl.style.display = 'none';
+    } else if (clickStep === 2) {
+      msgEl.style.display = 'block';
+    } else if (clickStep === 3) {
+      msgEl.innerHTML += `<br><strong>🎁 ${msg.blessing}</strong>`;
+    }
+  }
+});
+
+// 初次載入畫面
+renderMessages();
