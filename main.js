@@ -1,19 +1,15 @@
-const messageForm = document.getElementById("messageForm");
-const app = document.getElementById("app");
-const messageCount = document.getElementById("messageCount");
+const form = document.getElementById('messageForm');
+const app = document.getElementById('app');
+const messageCount = document.getElementById('messageCount');
 
-let messages = [];
-let clickState = 0;
-let originalCharacter = "";
-let currentMessage = null;
 const blessings = [
-  "生日快樂！天天都像海賊王一樣自由！",
-  "願你擁有香吉士的浪漫與好手藝～",
-  "祝你一年比一年更帥更可愛！",
-  "願你健康快樂又富有，如佛朗基的改造人生！",
-  "希望你像魯夫一樣無憂無慮，勇往直前！",
-  "生日快樂！願你天天開心！",
-  "你最棒！今天也要幸福喔！",
+  "願你天天都有甜甜的心情,！",
+  "祝笑容滿滿！",
+  "希望你的願望通通實現！",
+  "今天的你最閃耀！",
+  "給你無限的祝福與快樂！",
+  "願你天天開心🎉！ 記得每天都要笑一下！",
+  "你最棒！今生也要幸福喔！",
   "希望你的人生像航海王一樣精彩！",
   "祝你一整年都像魯夫吃到肉一樣快樂！",
   "願你天天笑得像魯夫一樣開懷！",
@@ -24,15 +20,12 @@ const blessings = [
   "別忘了休息，像喬巴一樣可愛療癒！",
   "每天都要讚美自己，像女帝一樣自信滿滿！",
   "像香吉士一樣暖心地寵愛生活吧～",
-  "記得每天都要笑一下！🎉",
-  "願你天天都有好心情！",
   "悶騷也可以很快樂！",
   "祝你未來一年都比去年的今天更棒！",
   "記得，每一天都值得慶祝～",
   "祝你快樂如喬巴，勇敢如索隆！",
   "祝你身體健康！",
   "希望你心想事成！",
-  "蒟蒻信也偷偷祝福你～",
   "每天都被幸福包圍！",
   "祝你擁有香吉士的美食與羅賓的智慧！",
   "願你每一天都充滿笑容 😄",
@@ -43,72 +36,84 @@ const blessings = [
   "身體健康，平安快樂！",
   "祝你被好多好事砸中！",
   "每天都充滿驚喜與愛！",
-  ];
-// 初始化角色圖片顯示區
-const characterImg = document.createElement("img");
-characterImg.className = "character-img";
-app.appendChild(characterImg);
+  "希望你每天都能像娜美數錢一樣快樂～",,
+  "願你天天都有好心情！",
+  "蒟蒻信也偷偷祝福你～",
+];
 
-function updateMessageCount() {
-  messageCount.textContent = `目前共有 ${messages.length} 筆留言`;
+let messages = JSON.parse(localStorage.getItem('messages')) || [];
+let tapCount = 0;
+let currentCharacter = null;
+
+// 清除留言觸發關鍵詞
+const clearTriggerName = "夏夕夏景";
+
+// 若 localStorage 記錄了觸發，清空留言
+if (localStorage.getItem('clearTriggered') === 'true') {
+  messages = [];
+  localStorage.setItem('messages', JSON.stringify(messages));
+  localStorage.removeItem('clearTriggered');
 }
 
-function renderMessage(messageObj) {
-  currentMessage = messageObj;
-  characterImg.src = `images/${messageObj.character}.png`;
-  characterImg.alt = messageObj.character;
-  characterImg.dataset.original = messageObj.character;
-  characterImg.style.display = "block";
+function saveMessages() {
+  localStorage.setItem('messages', JSON.stringify(messages));
 }
 
-characterImg.addEventListener("click", () => {
-  if (!currentMessage) return;
+function renderMessages() {
+  app.innerHTML = '';
+  messageCount.textContent = `總共有 ${messages.length} 則留言！`;
 
-  clickState++;
+  messages.forEach((msg, index) => {
+    const msgDiv = document.createElement('div');
+    msgDiv.className = 'message';
+    msgDiv.dataset.index = index;
+    msgDiv.dataset.character = msg.character;
+    msgDiv.dataset.timestamp = msg.timestamp;
 
-  if (clickState === 1) {
-    // 顯示留言內容
-    alert(`留言內容：${currentMessage.message}`);
-  } else if (clickState === 2) {
-    // 顯示祝福語
-    const randomBlessing = blessings[Math.floor(Math.random() * blessings.length)];
-    alert(`🎉 ${randomBlessing}`);
-  } else if (clickState === 3) {
-    // 點一下就切回原角色
-    characterImg.src = `images/${characterImg.dataset.original}.png`;
-    clickState = 0;
-  }
-});
+    msgDiv.addEventListener('click', () => {
+      tapCount++;
+      const char = msg.character;
+      if (tapCount % 4 === 1) {
+        msgDiv.innerHTML = `<img src="images/${char}.png"><br>`;
+      } else if (tapCount % 4 === 2) {
+        msgDiv.innerHTML = `<img src="images/${char}.png"><p>祝賀者:${msg.name},祝賀詞:${msg.message},留言時間:${msg.timestamp}</p>`;
+      } else if (tapCount % 4 === 3) {
+        const bless = blessings[Math.floor(Math.random() * blessings.length)];
+        msgDiv.innerHTML = `<img src="images/${char}.png"><p>祝賀者:${msg.name},祝賀詞:${msg.message},留言時間:${msg.timestamp}</p><p class="blessing">${bless}</p>`;
+      } else {
+        msgDiv.innerHTML = `<img src="images/${char}.png"><br>`;
+        tapCount = 0;
+      }
+    });
 
-messageForm.addEventListener("submit", (e) => {
+    msgDiv.innerHTML = `<img src="images/${msg.character}.png"><br>`;
+    app.appendChild(msgDiv);
+  });
+}
+
+form.addEventListener('submit', (e) => {
   e.preventDefault();
+  const name = form.name.value.trim();
+  const message = form.message.value.trim();
+  let character = form.character.value;
+  const timeElapsed = Date.now();
+  const timestamp = new Date(timeElapsed).toUTCString();
 
-  const name = messageForm.name.value.trim();
-  const message = messageForm.message.value.trim();
-  let character = messageForm.character.value;
-
-  if (!name || !message) return;
-
-  // 清除所有留言條件
-  if (name === "夏夕夏景") {
-    if (confirm("你輸入了『夏夕夏景』，這將清除所有留言，確定嗎？")) {
-      messages = [];
-      updateMessageCount();
-      alert("留言已全部清除！");
-    }
-    messageForm.reset();
+  // 特殊輸入
+  if (name === clearTriggerName) {
+    localStorage.setItem('clearTriggered', 'true');
+    location.reload();
     return;
   }
 
-  if (name === "小屁股蛋") {
+  if (name.includes("小屁股蛋")) {
     character = "special";
   }
 
-  const messageObj = { name, message, character };
-  messages.push(messageObj);
-
-  renderMessage(messageObj);
-  updateMessageCount();
-  messageForm.reset();
-  clickState = 0;
+  messages.push({ name, message, character, timestamp });
+  saveMessages();
+  form.reset();
+  renderMessages();
 });
+
+renderMessages();
