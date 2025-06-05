@@ -33,7 +33,6 @@ let allMessages = JSON.parse(localStorage.getItem('messages')) || [];
 function saveMessages() {
   localStorage.setItem('messages', JSON.stringify(allMessages));
 }
-
 function renderMessages(character) {
   const filtered = allMessages.filter(msg => msg.character === character);
   messageCount.textContent = `共有 ${filtered.length} 筆「${character}」的留言`;
@@ -45,13 +44,11 @@ function renderMessages(character) {
     </div>
   `).join('');
 }
-
 form.addEventListener('submit', e => {
   e.preventDefault();
   const name = form.name.value.trim();
   const content = form.message.value.trim();
   let character = characterSelect.value;
-
   // 特殊處理小屁股蛋 or 夏夕夏景
   if (content === '小屁股蛋' || content === '夏夕夏景') {
     character = 'special';
@@ -65,7 +62,6 @@ form.addEventListener('submit', e => {
       }
     }
   }
-
   const time = new Date().toLocaleString('zh-TW');
   const message = {
     name,
@@ -81,15 +77,12 @@ form.addEventListener('submit', e => {
   renderMessages(character);
   form.reset();
 });
-
 app.addEventListener('click', () => {
   if (!currentCharacter) return;
 
   const filtered = allMessages.filter(msg => msg.character === currentCharacter);
   if (filtered.length === 0) return;
-
   currentState = (currentState + 1) % 4;
-
   switch (currentState) {
     case 1:
       // 顯示留言內容
@@ -116,7 +109,6 @@ app.addEventListener('click', () => {
       break;
   }
 });
-
 // 初始渲染（可根據預設角色改變）
 if (allMessages.length > 0) {
   currentCharacter = allMessages[allMessages.length - 1].character;
