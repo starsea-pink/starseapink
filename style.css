@@ -63,3 +63,75 @@ button:hover {
   color: #d35400;
   font-weight: bold;
 }
+/* 留言區總容器 */
+#messageCount {
+  font-weight: bold;
+  margin-bottom: 20px;
+  font-size: 18px;
+}
+
+.card {
+  display: flex;
+  align-items: flex-start;
+  margin-bottom: 15px;
+  background-color: #fff;
+  padding: 12px;
+  border-radius: 10px;
+  box-shadow: 0 0 5px rgba(0,0,0,0.1);
+}
+
+/* 頭像樣式 */
+.avatar {
+  width: 70px;
+  height: 70px;
+  border-radius: 50%;
+  margin-right: 15px;
+  background-size: cover;
+  background-position: center;
+  flex-shrink: 0;
+}
+
+/* 角色對應頭像（先示範一個，請依需要新增） */
+.avatar.Franky {
+  background-image: url('images/Franky.png');
+}.avatar.Franky {
+  background-image: url('images/beauty1.png');
+}.avatar.beauty1 {
+  background-image: url('images/beauty2.png');
+}.avatar.beauty2 {
+  background-image: url('images/Chopper.png');
+}.avatar.Chopper {
+  background-image: url('images/Hancock.png');
+}.avatar.Hancock {
+  background-image: url('images/Luffy.png');
+}.avatar.Luffy {
+  background-image: url('images/Nami.png');
+}.avatar.Nami {
+  background-image: url('images/Robin.png');
+}avatar.Robin {
+  background-image: url('images/Sanji.png');
+}avatar.Sanji {
+  background-image: url('images/Usopp.png');
+}avatar.Usopp {
+  background-image: url('images/Zoro.png');
+}avatar.Zoro 
+/* 文字內容區塊 */
+.content {
+  flex: 1;
+}
+
+.name {
+  font-weight: bold;
+  margin-bottom: 4px;
+}
+
+.time {
+  font-size: 0.85em;
+  color: #666;
+  margin-left: 10px;
+}
+
+.text {
+  white-space: pre-wrap;
+  line-height: 1.4;
+}
