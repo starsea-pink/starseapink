@@ -39,7 +39,6 @@ document.getElementById("messageForm").addEventListener("submit", function (e) {
     })
     .catch(err => console.error("傳送留言時錯誤：", err));
 });
-
 function getAvatarUrl(key, name) {
-  return `images/avatar_${key}.png`;
+  return `images/${key}.png`;
 }
