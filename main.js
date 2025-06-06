@@ -9,6 +9,7 @@ document.addEventListener("DOMContentLoaded", function () {
     fetch(API_URL)
       .then(response => response.json())
       .then(data => {
+        console.log("留言資料:",data);//
         app.innerHTML = "";
         messageCount.textContent = `目前共有 ${data.length} 則留言 🎉`;
 
