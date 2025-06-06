@@ -46,12 +46,12 @@ function getAvatarUrl(key, name = "") {
     return 'images/Luffy.png'; // 避免濫用專屬角色
   }
   const map = {
-    Luffy: 'images/Luffy.png',
-    Nami: 'images/Nami.png',
-    Robin: 'images/Robin.png',
-    Hancock: 'images/Hancock.png',
-    Sanji: 'images/Sanji.png',
-    Zoro: 'images/Zoro.png',
+    luffy: 'images/luffy.png',
+    nami: 'images/nami.png',
+    robin: 'images/robin.png',
+    hancock: 'images/hancock.png',
+    sanji: 'images/sanji.png',
+    zoro: 'images/zoro.png',
     beauty1: 'images/beauty1.png',
     beauty2: 'images/beauty2.png',
     Special: 'images/special.png'
