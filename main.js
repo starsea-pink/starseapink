@@ -1,9 +1,9 @@
-document.addEventListener("DOMContentLoaded", function () {
+document.addEventListener("DOMContentLoaded", () => {
   const app = document.getElementById("app");
   const form = document.getElementById("messageForm");
-  const nameInput = document.getElementById("name");
-  const avatarSelect = document.getElementById("avatar");
-  const messageInput = document.getElementById("message");
+  const nameInput = document.getElementById("username");       // 你的 HTML 中是 id="username"
+  const avatarSelect = form.querySelector("select[name='character']"); // 對應角色選擇
+  const messageInput = form.querySelector("textarea[name='message']");
   const messageCount = document.getElementById("messageCount");
 
   let messages = [];
@@ -51,7 +51,7 @@ document.addEventListener("DOMContentLoaded", function () {
       avatarImage.alt = "角色圖片";
 
       const nameTag = document.createElement("h4");
-      nameTag.textContent = msg.name;
+      nameTag.textContent = msg.name || "匿名";
 
       const messageText = document.createElement("p");
       messageText.textContent = msg.message;
@@ -101,18 +101,29 @@ document.addEventListener("DOMContentLoaded", function () {
   form.addEventListener("submit", function (e) {
     e.preventDefault();
 
-    const username =from username.value.trim();
+    const username = nameInput.value.trim();
     const avatar = avatarSelect.value;
     const message = messageInput.value.trim();
-    //特殊指令:清除留言
-    if (username ==="夏夕夏景"){alert"(留言已清除! (這是特殊指令) ");
-        //清空留言欄位
-        form username.value = "";
-        form message.value=  "";
-        return;
-        }
-    messages.push({ username,avatar, message });
+
+    // 特殊指令:清除留言
+    if (username === "夏夕夏景") {
+      alert("留言已清除! (這是特殊指令)");
+      messages = [];          // 清空留言資料
+      renderMessages();       // 重新渲染清空的留言
+      form.reset();           // 清空表單欄位
+      return;
+    }
+
+    if (!username || !message) {
+      alert("請輸入暱稱與留言內容！");
+      return;
+    }
+
+    messages.push({ name: username, avatar, message });
     renderMessages();
     form.reset();
   });
+
+  // 頁面一開始就渲染（若有預設留言可用）
+  renderMessages();
 });
