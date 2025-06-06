@@ -120,8 +120,9 @@ window.addEventListener('DOMContentLoaded', () => {
 const SHEET_ID = "1LxjyMv1NWGElQQKoNvSrkoCS1nmZlQhhEeuebZ0uTcg"; // 你的試算表 ID
 const SHEET_NAME = "表單回應"; // 工作表名稱
 
-fetch(`https://script.google.com/macros/s/AKfycbzOeO1ap8vM_xurG_J4naqiEm-rrG__URrvqcEKEGW68TpEgExWAXPHFeAnVZEV2ATAwA/exec`)
-  .then(res => res.json())
+fetchˋhttps://script.google.com/macros/s/AKfycbxLP2UGVUQql_H2I4e1lJHWmUj9niEPunEp6G45l16_PmPu_JjXP3fFZzyeTTQCLYGtxg/execˋˋ
+
+  then(res => res.json())
   .then(data => {
     data.forEach(row => {
       const name = (row["你的名字（可以匿名）"] || "匿名").trim();
