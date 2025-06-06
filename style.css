@@ -92,29 +92,51 @@ button:hover {
 }
 
 /* 角色對應頭像（先示範一個，請依需要新增） */
-.avatar.Franky {
+/* 頭像樣式 */
+.avatar {
+  width: 70px;
+  height: 70px;
+  border-radius: 50%;
+  margin-right: 15px;
+  background-size: cover;
+  background-position: center;
+  flex-shrink: 0;
+}
+
+/* 各角色頭像背景圖 */
+.avatar.franky {
   background-image: url('images/franky.png');
-}.avatar.franky {
+}
+.avatar.beauty1 {
   background-image: url('images/beauty1.png');
-}.avatar.beauty1 {
+}
+.avatar.beauty2 {
   background-image: url('images/beauty2.png');
-}.avatar.beauty2 {
+}
+.avatar.chopper {
   background-image: url('images/chopper.png');
-}.avatar.chopper {
+}
+.avatar.hancock {
   background-image: url('images/hancock.png');
-}.avatar.hancock {
+}
+.avatar.luffy {
   background-image: url('images/luffy.png');
-}.avatar.luffy {
+}
+.avatar.nami {
   background-image: url('images/nami.png');
-}.avatar.nami {
+}
+.avatar.robin {
   background-image: url('images/robin.png');
-}avatar.robin {
+}
+.avatar.sanji {
   background-image: url('images/sanji.png');
-}avatar.sanji {
+}
+.avatar.usopp {
   background-image: url('images/usopp.png');
-}avatar.usopp {
+}
+.avatar.zoro {
   background-image: url('images/zoro.png');
-}avatar.zoro 
+}
 /* 文字內容區塊 */
 .content {
   flex: 1;
