@@ -18,7 +18,7 @@ document.getElementById("messageForm").addEventListener("submit", function (e) {
   document.getElementById("messageForm").reset();
 
   // ✅ 新增：送出留言到 Google Sheet
-  fetch("https://script.google.com/macros/s/AKfycbzwk0JbtKjd5ofUIBxC_dj9-kDIca-738jqNC7rKC1-YP3MXi6-Z6fG6EA9V-_AswUVxA/exec", {
+  fetch("https://script.google.com/macros/s/AKfycbzp_uylUJ1q2qh4wK06GPIDATdkq9bgpwRLgVDR0bQ8GFq1K0zO3SoFLT0VSA2g2Ysb1A/exec"
     method: "POST",
     body: JSON.stringify({
       name: name,
