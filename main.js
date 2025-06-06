@@ -1,8 +1,8 @@
 document.addEventListener("DOMContentLoaded", () => {
   const app = document.getElementById("app");
   const form = document.getElementById("messageForm");
-  const nameInput = document.getElementById("username");       // 你的 HTML 中是 id="username"
-  const avatarSelect = form.querySelector("select[name='character']"); // 對應角色選擇
+  const nameInput = document.getElementById("username");
+  const avatarSelect = form.querySelector("select[name='character']");
   const messageInput = form.querySelector("textarea[name='message']");
   const messageCount = document.getElementById("messageCount");
 
@@ -41,7 +41,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   function renderMessages() {
     app.innerHTML = "";
-    messages.forEach((msg, index) => {
+    messages.forEach((msg) => {
       const card = document.createElement("div");
       card.className = "message-card";
 
@@ -59,15 +59,13 @@ document.addEventListener("DOMContentLoaded", () => {
       const blessing = document.createElement("p");
       blessing.textContent = getRandomBlessing();
 
-      // 初始化狀態為角色圖片
       let displayState = 0;
-
       const cardContent = document.createElement("div");
       cardContent.appendChild(avatarImage);
 
       card.addEventListener("click", () => {
         displayState = (displayState + 1) % 4;
-        cardContent.innerHTML = ""; // 清空
+        cardContent.innerHTML = "";
 
         if (displayState === 0) {
           cardContent.appendChild(avatarImage);
@@ -105,12 +103,11 @@ document.addEventListener("DOMContentLoaded", () => {
     const avatar = avatarSelect.value;
     const message = messageInput.value.trim();
 
-    // 特殊指令:清除留言
     if (username === "夏夕夏景") {
       alert("留言已清除! (這是特殊指令)");
-      messages = [];          // 清空留言資料
-      renderMessages();       // 重新渲染清空的留言
-      form.reset();           // 清空表單欄位
+      messages = [];
+      renderMessages();
+      form.reset();
       return;
     }
 
@@ -124,6 +121,5 @@ document.addEventListener("DOMContentLoaded", () => {
     form.reset();
   });
 
-  // 頁面一開始就渲染（若有預設留言可用）
   renderMessages();
 });
