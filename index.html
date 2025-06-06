@@ -1,15 +1,15 @@
 <!DOCTYPE html>
 <html lang="zh-Hant">
 <head>
-  <meta charset="UTF-8">
+  <meta charset="UTF-8" />
   <title>蒟蒻信的生日悶騷留言板</title>
-  <link rel="stylesheet" href="style.css">
-  <link rel="icon" href="favicon.ico">
+  <link rel="stylesheet" href="style.css" />
+  <link rel="icon" href="favicon.ico" />
 </head>
 <body>
   <button id="musicToggle">播放音樂</button>
   <audio id="bgMusic" loop>
-    <source src="music/Endofworld.mp3" type="audio/mpeg">
+    <source src="music/Endofworld.mp3" type="audio/mpeg" />
     你的瀏覽器不支援音樂播放。
   </audio>
 
@@ -19,21 +19,18 @@
 
     <form id="messageForm">
       <label for="username">你的暱稱：</label>
-      <input id ="username"
-      name="username"
-      autocomplete='nickname'>
-      <type="text" required>
+      <input id="username" name="username" type="text" autocomplete="nickname" required />
 
       <label for="message">留言內容：</label>
-      <textarea name="message" required></textarea>
+      <textarea id="message" name="message" required></textarea>
 
       <label for="character">選擇代表角色：</label>
-      <select name="character">
+      <select id="character" name="character" required>
         <option value="luffy">魯夫</option>
         <option value="zoro">索隆</option>
         <option value="sanji">香吉士</option>
         <option value="nami">娜美</option>
-        <option value="Robin">羅賓</option>
+        <option value="robin">羅賓</option>
         <option value="chopper">喬巴</option>
         <option value="usopp">騙人布</option>
         <option value="franky">佛朗基</option>
@@ -44,7 +41,7 @@
 
       <button type="submit">送出留言</button>
     </form>
-    <div id="messageCount"></div>
+
     <div id="app"></div>
   </div>
 
@@ -62,7 +59,7 @@
       }
     });
   </script>
+
   <script src="main.js"></script>
 </body>
 </html>
-
