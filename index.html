@@ -1,64 +1,160 @@
 <!DOCTYPE html>
-<html lang="zh-Hant">
+<html lang="zh-TW">
 <head>
-  <meta charset="UTF-8">
-  <title>蒟蒻信的生日悶騷留言板</title>
-  <link rel="stylesheet" href="style.css">
-  <link rel="icon" href="favicon.ico">
+  <meta charset="UTF-8" />
+  <title>悶騷生日留言牆</title>
+  <style>
+    body {
+      font-family: "微軟正黑體", sans-serif;
+      background-color: #fdf6e3;
+      padding: 20px;
+      text-align: center;
+    }
+
+    .message {
+      display: inline-block;
+      margin: 10px;
+      cursor: pointer;
+      transition: transform 0.2s;
+    }
+
+    .message:hover {
+      transform: scale(1.05);
+    }
+
+    .character {
+      width: 120px;
+      height: auto;
+      border-radius: 12px;
+    }
+
+    .text-box {
+      background-color: #fff;
+      padding: 10px;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+      width: 200px;
+      text-align: left;
+      font-size: 14px;
+    }
+
+    .timestamp {
+      display: block;
+      margin-top: 6px;
+      font-size: 12px;
+      color: #888;
+    }
+
+    h1 {
+      color: #d2691e;
+    }
+  </style>
 </head>
 <body>
-  <button id="musicToggle">播放音樂</button>
-  <audio id="bgMusic" loop>
-    <source src="music/Endofworld.mp3" type="audio/mpeg">
-    你的瀏覽器不支援音樂播放。
-  </audio>
-
-  <div class="container">
-    <h1>蒟蒻信的生日悶騷留言板</h1>
-    <p id="messageCount"></p>
-
-    <form id="messageForm">
-      <label for="name">你的暱稱：</label>
-      <input type="text" name="name" required>
-
-      <label for="message">留言內容：</label>
-      <textarea name="message" required></textarea>
-
-      <label for="character">選擇代表角色：</label>
-      <select name="character">
-        <option value="Luffy">魯夫</option>
-        <option value="Zoro">索隆</option>
-        <option value="Sanji">香吉士</option>
-        <option value="Nami">娜美</option>
-        <option value="Robin">羅賓</option>
-        <option value="Chopper">喬巴</option>
-        <option value="Usopp">騙人布</option>
-        <option value="Franky">佛朗基</option>
-        <option value="Hancock">女帝</option>
-        <option value="beauty1">性感美女1</option>
-        <option value="beauty2">性感美女2</option>
-      </select>
-
-      <button type="submit">送出留言</button>
-    </form>
-
-    <div id="app"></div>
-  </div>
+  <h1>🎂 悶騷生日留言牆 🎉</h1>
+  <p>點角色可以看到留言內容、祝福與切換圖片唷！</p>
+  <div id="app"></div>
 
   <script>
-    const bgMusic = document.getElementById('bgMusic');
-    const musicToggle = document.getElementById('musicToggle');
+    // 自動載入 Google 表單留言
+    fetch("https://opensheet.elk.sh/1LxjyMv1NWGElQQKoNvSrkoCS1nmZlQhhEeuebZ0uTcg/Form%20Responses%201")
+      .then((res) => res.json())
+      .then((data) => {
+        data.forEach(entry => {
+          const name = entry["您的暱稱"]?.trim() || "匿名";
+          const message = entry["想對壽星說的悄悄話"]?.trim() || "";
+          const avatarKey = entry["你選的角色"] || "Luffy";
+          const timestamp = entry["時間戳記"];
 
-    musicToggle.addEventListener('click', () => {
-      if (bgMusic.paused) {
-        bgMusic.play();
-        musicToggle.textContent = '暫停音樂';
+          const avatarUrl = getAvatarUrl(avatarKey, name);
+
+          const messageHTML = `
+            <div class="message cycle" data-step="0" data-name="${name}" data-message="${message}" data-time="${timestamp}" data-avatar="${avatarKey}">
+              <img class="character" src="${avatarUrl}" alt="角色" />
+            </div>
+          `;
+          document.getElementById("app").insertAdjacentHTML("beforeend", messageHTML);
+        });
+      });
+
+    // 點角色切換顯示
+    document.addEventListener("click", function (e) {
+      const msg = e.target.closest(".message.cycle");
+      if (!msg) return;
+
+      let step = parseInt(msg.getAttribute("data-step"), 10);
+      const name = msg.getAttribute("data-name");
+      const message = msg.getAttribute("data-message");
+      const time = msg.getAttribute("data-time");
+      const avatarKey = msg.getAttribute("data-avatar") || "Luffy";
+
+      if (step === 0) {
+        msg.innerHTML = `<div class="text-box">${name}：${message}<br><span class="timestamp">${time}</span></div>`;
+      } else if (step === 1) {
+        msg.innerHTML = `<div class="text-box">${getRandomHBD()}<br><span class="timestamp">${time}</span></div>`;
       } else {
-        bgMusic.pause();
-        musicToggle.textContent = '播放音樂';
+        const avatarUrl = getAvatarUrl(avatarKey, name);
+        msg.innerHTML = `<img class="character" src="${avatarUrl}" alt="角色" />`;
+        step = -1;
       }
+
+      msg.setAttribute("data-step", step + 1);
     });
+
+    function getAvatarUrl(key, name = "") {
+      if (key === "Special" && name !== "小屁股蛋") {
+        return 'images/Luffy.png'; // 避免濫用專屬角色
+      }
+      const map = {
+        Luffy: 'images/Luffy.png',
+        Nami: 'images/Nami.png',
+        Robin: 'images/Robin.png',
+        Hancock: 'images/Hancock.png',
+        Sanji: 'images/Sanji.png',
+        Zoro: 'images/Zoro.png',
+        beauty1: 'images/beauty1.png',
+        beauty2: 'images/beauty2.png',
+        Special: 'images/special.png'
+      };
+      return map[key] || map.Luffy;
+    }
+
+    function getRandomHBD() {
+      const list = [
+         "願你天天開心🎉！ 記得每天都要笑一下！",
+  "你最棒！今天也要幸福喔！",
+  "希望你的人生像航海王一樣精彩！",
+  "祝你一整年都像魯夫吃到肉一樣快樂！",
+  "願你天天笑得像魯夫一樣開懷！",
+  "祝你像索隆一樣堅定勇敢！",
+  "希望你每天都能像娜美數錢一樣快樂～",
+  "人生就該像佛朗基一樣超～級～！",
+  "祝你魅力爆棚，像羅賓一樣優雅神秘～",
+  "別忘了休息，像喬巴一樣可愛療癒！",
+  "每天都要讚美自己，像女帝一樣自信滿滿！",
+  "像香吉士一樣暖心地寵愛生活吧～",
+  "悶騷也可以很快樂！",
+  "祝你未來一年都比去年的今天更棒！",
+  "記得，每一天都值得慶祝～",
+  "祝你快樂如喬巴，勇敢如索隆！",
+  "祝你身體健康！",
+  "希望你心想事成！",
+  "每天都被幸福包圍！",
+  "祝你擁有香吉士的美食與羅賓的智慧！",
+  "願你每一天都充滿笑容 😄",
+  "祝你心想事成，幸福美滿 ✨",
+  "未來一年順順利利 🍀",
+  "願你天天都像今天一樣快樂 🥳",
+  "希望你未來一年都順順利利！",
+  "身體健康，平安快樂！",
+  "祝你被好多好事砸中！",
+  "每天都充滿驚喜與愛！",
+  "希望你每天都能像娜美數錢一樣快樂～",
+  "願你天天都有好心情！",
+  "蒟蒻信也偷偷祝福你～",
+      ];
+      return list[Math.floor(Math.random() * list.length)];
+    }
   </script>
-  <script src="main.js"></script>
 </body>
 </html>
