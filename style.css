@@ -93,28 +93,28 @@ button:hover {
 
 /* 角色對應頭像（先示範一個，請依需要新增） */
 .avatar.Franky {
-  background-image: url('images/Franky.png');
-}.avatar.Franky {
+  background-image: url('images/franky.png');
+}.avatar.franky {
   background-image: url('images/beauty1.png');
 }.avatar.beauty1 {
   background-image: url('images/beauty2.png');
 }.avatar.beauty2 {
-  background-image: url('images/Chopper.png');
-}.avatar.Chopper {
-  background-image: url('images/Hancock.png');
-}.avatar.Hancock {
-  background-image: url('images/Luffy.png');
-}.avatar.Luffy {
-  background-image: url('images/Nami.png');
-}.avatar.Nami {
-  background-image: url('images/Robin.png');
-}avatar.Robin {
-  background-image: url('images/Sanji.png');
-}avatar.Sanji {
-  background-image: url('images/Usopp.png');
-}avatar.Usopp {
-  background-image: url('images/Zoro.png');
-}avatar.Zoro 
+  background-image: url('images/chopper.png');
+}.avatar.chopper {
+  background-image: url('images/hancock.png');
+}.avatar.hancock {
+  background-image: url('images/luffy.png');
+}.avatar.luffy {
+  background-image: url('images/nami.png');
+}.avatar.nami {
+  background-image: url('images/robin.png');
+}avatar.robin {
+  background-image: url('images/sanji.png');
+}avatar.sanji {
+  background-image: url('images/usopp.png');
+}avatar.usopp {
+  background-image: url('images/zoro.png');
+}avatar.zoro 
 /* 文字內容區塊 */
 .content {
   flex: 1;
