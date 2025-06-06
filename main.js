@@ -1,16 +1,25 @@
 document.addEventListener("DOMContentLoaded", function () {
-  const form = document.getElementById("messageForm");
   const app = document.getElementById("app");
+  const form = document.getElementById("messageForm");
+  const nameInput = document.getElementById("name");
+  const avatarSelect = document.getElementById("avatar");
+  const messageInput = document.getElementById("message");
   const messageCount = document.getElementById("messageCount");
 
-  const API_URL = "https://script.google.com/macros/s/AKfycbzRb9Pc_6L6StlLSQTGRZSdcKQxgkZ3--ITAEheAP-DMIp7_tZcDRMa-YgjxN-qu49YsQ/exec";
+  let messages = [];
 
-  const blessings = [
-    "生日快樂🎂 願你快樂爆擊每一天！",
-    "願你所到之處皆有人挺你🌈",
-    "今年也要有滿滿 SSR！",
-    "祝你心想事成、永遠不加班！",
-    "願你人生如 One Piece 一樣精彩大冒險！",
+  const birthdayMessages = [
+    "祝你天天開心、事事順利！",
+    "願你今年比去年更幸福！",
+    "生日快樂，年年有今日，歲歲有今朝！",
+    "願你的生活像動畫一樣精彩！",
+    "願你心想事成、笑口常開！",
+    "願你今天的笑比昨天多，煩惱比去年少！",
+    "祝你越來越帥氣，越來越有錢！",
+    "Happy Birthday！願你快樂到爆炸！",
+    "年年十八，青春美麗不打折！",
+    "願你所求皆如願，所行化坦途！",
+    "我最崇拜Eric了!",
     "記得，每一天都值得慶祝～",
     "祝你快樂如喬巴，勇敢如索隆！",
     "祝你身體健康！",
@@ -18,87 +27,92 @@ document.addEventListener("DOMContentLoaded", function () {
     "每天都被幸福包圍！",
     "祝你擁有香吉士的美食與羅賓的智慧！",
     "願你每一天都充滿笑容 😄",
-   "祝你心想事成，幸福美滿 ✨",
-   "未來一年順順利利 🍀",
-   "願你天天都像今天一樣快樂 🥳",
-   "希望你未來一年都順順利利！",
-   "身體健康，平安快樂！",
-   "祝你被好多好事砸中！",
-   "每天都充滿驚喜與愛！",
-   "希望你每天都能像娜美數錢一樣快樂～",
-   "願你天天都有好心情！",
-   "蒟蒻信也偷偷祝福你～",
+    "祝你心想事成，幸福美滿 ✨",
+    "未來一年順順利利 🍀",
+    "願你天天都像今天一樣快樂 🥳",
+    "希望你未來一年都順順利利！",
+    "身體健康，平安快樂！",
+    "祝你被好多好事砸中！",
+    "每天都充滿驚喜與愛！",
+    "希望你每天都能像娜美數錢一樣快樂～",
+    "願你天天都有好心情！",
+    "蒟蒻信也偷偷祝福你～",
   ];
 
-  function getRandomBlessing() {
-    return blessings[Math.floor(Math.random() * blessings.length)];
-  }
+  function renderMessages() {
+    app.innerHTML = "";
+    messages.forEach((msg, index) => {
+      const card = document.createElement("div");
+      card.className = "message-card";
 
-  function loadMessages() {
-    fetch(API_URL)
-      .then(response => response.json())
-      .then(data => {
-        app.innerHTML = "";
-        messageCount.textContent = `目前共有 ${data.length} 則留言 🎉`;
+      const avatarImage = document.createElement("img");
+      avatarImage.src = getAvatarPath(msg.name, msg.avatar);
+      avatarImage.className = "avatar-img";
+      avatarImage.alt = "角色圖片";
 
-        data.reverse().forEach(entry => {
-          const card = document.createElement("div");
-          card.className = "card";
+      const nameTag = document.createElement("h4");
+      nameTag.textContent = msg.name;
 
-          const character = entry.character || "luffy";
-          const name = entry.name || "匿名";
-          const time = formatTime(entry.time);
-          const message = formatText(entry.message);
-          const blessing = getRandomBlessing();
+      const messageText = document.createElement("p");
+      messageText.textContent = msg.message;
 
-          let step = 0;
+      const blessing = document.createElement("p");
+      blessing.textContent = getRandomBlessing();
 
-          card.innerHTML = `
-            <div class="avatar ${character}"></div>
-            <div class="content">
-              <div class="name">${name} <span class="time">${time}</span></div>
-            </div>
-          `;
+      // 初始化狀態為角色圖片
+      let displayState = 0;
 
-          const contentDiv = card.querySelector(".content");
+      const cardContent = document.createElement("div");
+      cardContent.appendChild(avatarImage);
 
-          card.addEventListener("click", () => {
-            step = (step + 1) % 4;
+      card.addEventListener("click", () => {
+        displayState = (displayState + 1) % 4;
+        cardContent.innerHTML = ""; // 清空
 
-            if (step === 1) {
-              contentDiv.innerHTML = `<div class="text">${message}</div>`;
-            } else if (step === 2) {
-              contentDiv.innerHTML = `<div class="text">🎁 ${blessing}</div>`;
-            } else if (step === 3) {
-              contentDiv.innerHTML = `<div class="name">${name} <span class="time">${time}</span></div>`;
-            }
-            // step 0 不變，保留角色頭像與初始樣式
-          });
-
-          app.appendChild(card);
-        });
-      })
-      .catch(err => {
-        app.innerHTML = `<p style="color:red;">留言載入失敗：${err}</p>`;
+        if (displayState === 0) {
+          cardContent.appendChild(avatarImage);
+        } else if (displayState === 1) {
+          cardContent.appendChild(nameTag);
+          cardContent.appendChild(messageText);
+        } else if (displayState === 2) {
+          cardContent.appendChild(blessing);
+        } else {
+          cardContent.appendChild(avatarImage);
+        }
       });
+
+      card.appendChild(cardContent);
+      app.appendChild(card);
+    });
+
+    messageCount.textContent = `目前共有 ${messages.length} 則留言`;
   }
 
-  function formatText(text) {
-    return text
-      ? text.replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/\n/g, "<br>")
-      : "";
+  function getAvatarPath(name, avatar) {
+    if (name === "小屁股蛋") return "/images/special.png";
+    return `/images/${avatar}.png`;
   }
 
-  function formatTime(str) {
-    const d = new Date(str);
-    return d.toLocaleString("zh-TW");
+  function getRandomBlessing() {
+    const i = Math.floor(Math.random() * birthdayMessages.length);
+    return birthdayMessages[i];
   }
 
   form.addEventListener("submit", function (e) {
     e.preventDefault();
-    alert("留言送出成功！頁面將於 2 秒後更新");
-    setTimeout(() => window.location.reload(), 2000);
-  });
 
-  loadMessages();
+    const username =from username.value.trim();
+    const avatar = avatarSelect.value;
+    const message = messageInput.value.trim();
+    //特殊指令:清除留言
+    if (username ==="夏夕夏景"){alert"(留言已清除! (這是特殊指令) ");
+        //清空留言欄位
+        form username.value = "";
+        form message.value=  "";
+        return;
+        }
+    messages.push({ username,avatar, message });
+    renderMessages();
+    form.reset();
+  });
 });
